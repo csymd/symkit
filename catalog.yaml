@@ -51,7 +51,7 @@ harnesses:
         path: harnesses/teaching/packages/staff
         student_safe: false
       instructor:
-        description: Instructor agent plus course-prep, week-plan, assignment-review
+        description: Instructor agent plus course-prep, week-plan, assignment-review, accessibility-review
         path: harnesses/teaching/packages/instructor
         student_safe: false
       ta:
@@ -70,17 +70,17 @@ harnesses:
       materials: [shared]
     prune:
       ta:
-        skills: [course-prep, week-plan, assignment-review]
+        skills: [course-prep, week-plan, assignment-review, accessibility-review]
         agents: [instructor]
-        rules: [course-prep, week-plan, assignment-review]
+        rules: [course-prep, week-plan, assignment-review, accessibility]
       instructor:
         agents: [ta]
       faculty:
         agents: [ta]
       learner:
-        skills: [course-prep, week-plan, assignment-review, evaluate-content, release-materials]
+        skills: [course-prep, week-plan, assignment-review, accessibility-review, evaluate-content, release-materials]
         agents: [instructor, ta, materials-author]
-        rules: [course-prep, week-plan, assignment-review, evaluate-content, student-engagement]
+        rules: [course-prep, week-plan, assignment-review, accessibility, evaluate-content, student-engagement]
 
   research:
     status: active

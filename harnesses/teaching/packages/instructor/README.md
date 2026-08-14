@@ -13,6 +13,7 @@ Adds the **instructor** agent and instructor-only skills. Install with `staff`
 | `course-prep` | `.agents/skills/course-prep/` |
 | `week-plan` | `.agents/skills/week-plan/` |
 | `assignment-review` | `.agents/skills/assignment-review/` |
+| `accessibility-review` | `.agents/skills/accessibility-review/` |
 
 Do not install on TA-only machines if you want pack-level separation from
 course design tools.

@@ -30,6 +30,7 @@ mkdir -p "$T1"
 "$CLI" install "$T1" --harness teaching --role instructor --yes
 [[ -f "$T1/.agents/agents/instructor.md" ]] || fail "instructor agent"
 [[ -d "$T1/.agents/skills/course-prep" ]] || fail "course-prep after instructor"
+[[ -d "$T1/.agents/skills/accessibility-review" ]] || fail "accessibility-review after instructor"
 [[ -d "$T1/.grok/skills/course-prep" ]] || fail "grok adapter course-prep"
 [[ -d "$T1/.claude" ]] && fail "claude adapter should be absent by default"
 [[ -f "$T1/.symkit/state.yaml" ]] || fail "install state"
@@ -37,6 +38,7 @@ mkdir -p "$T1"
 # TA prunes instructor-only
 "$CLI" install "$T1" --harness teaching --role ta --yes
 [[ -d "$T1/.agents/skills/course-prep" ]] && fail "course-prep should be pruned on ta"
+[[ -d "$T1/.agents/skills/accessibility-review" ]] && fail "accessibility-review should be pruned on ta"
 [[ -f "$T1/.agents/agents/instructor.md" ]] && fail "instructor agent should be pruned on ta"
 [[ -f "$T1/.agents/agents/ta.md" ]] || fail "ta agent"
 [[ -d "$T1/.agents/skills/evaluate-content" ]] || fail "evaluate-content stays for ta"

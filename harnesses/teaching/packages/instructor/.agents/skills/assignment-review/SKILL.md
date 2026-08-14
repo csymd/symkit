@@ -33,6 +33,7 @@ Structured **materials QA** for a single assignment, lab, or checkpoint
 |:-----|:------------|
 | Score a student’s submission | `evaluate-content` |
 | Plan the next class | `week-plan` |
+| Dedicated accessibility pass | `accessibility-review` |
 | Invent a whole new unit | `course-prep` then this skill on the draft |
 | Ship/tag the course release | `release-materials` |
 
