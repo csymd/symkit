@@ -12,9 +12,12 @@ Licensed under the Apache License, Version 2.0.
 
 # <Skill title>
 
-On-demand procedure. Install as:
+On-demand procedure. Put the body in:
 
-`harnesses/<harness>/packages/<pkg>/.agents/skills/<skill-name>/SKILL.md`
+`core/library/skills/<skill-name>/SKILL.md`
+
+Then list the name under `core.always_skills` (every install) or a role’s
+`skills:` list in `catalog.yaml`.
 
 ## Steps
 

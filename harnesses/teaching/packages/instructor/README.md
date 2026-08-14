@@ -1,19 +1,18 @@
 # Instructor package
 
-Adds the **instructor** agent and instructor-only skills. Install with `staff`
-(and usually `shared`).
+Adds the **instructor** agent and instructor-only *rules*. Skills
+(`course-prep`, `week-plan`, `assignment-review`, `accessibility-review`,
+and shared `write-gherkin` / `evaluate-content`) live in
+`core/library/skills/` and are assigned in `catalog.yaml`.
 
 ```bash
-./cli/symkit install /path/to/course --harness teaching --role instructor
+./cli/symrig install /path/to/course --harness teaching --role instructor
 ```
 
 | Contents | Path |
 |:---------|:-----|
 | Instructor agent | `.agents/agents/instructor.md` |
-| `course-prep` | `.agents/skills/course-prep/` |
-| `week-plan` | `.agents/skills/week-plan/` |
-| `assignment-review` | `.agents/skills/assignment-review/` |
-| `accessibility-review` | `.agents/skills/accessibility-review/` |
+| Instructor-only rules | `.agents/rules/` |
 
 Do not install on TA-only machines if you want pack-level separation from
 course design tools.

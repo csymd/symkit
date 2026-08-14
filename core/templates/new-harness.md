@@ -3,15 +3,17 @@
 1. Copy `examples/teaching-overlay/` or an existing `harnesses/<name>/` tree.
 2. Add packages under `harnesses/<name>/packages/<pkg>/` with any of:
    - `AGENTS.md`
-   - `.agents/rules/`, `.agents/skills/`, `.agents/agents/`
+   - `.agents/rules/`, `.agents/agents/`
    - `docs/`
-3. Optional workspace scaffold: `harnesses/<name>/workspace/`.
-4. Register the harness, packages, roles, and prune lists in `catalog.yaml`.
-5. Check with:
+3. Add or reuse skill bodies under `core/library/skills/`.
+4. Optional workspace scaffold: `harnesses/<name>/workspace/`.
+5. Register the harness, packages, role `packages:` / `skills:`, and prune
+   lists (agents/rules) in `catalog.yaml`.
+6. Check with:
 
 ```bash
-./cli/symkit show <name>
-./cli/symkit init /tmp/symkit-try --harness <name> --role <role> --scaffold --yes
+./cli/symrig show <name>
+./cli/symrig init /tmp/symrig-try --harness <name> --role <role> --scaffold --yes
 ```
 
 Keep `AGENTS.md` short. Long procedures belong in skills.

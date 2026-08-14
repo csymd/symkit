@@ -1,4 +1,4 @@
-# symkit
+# symrig
 
 Vendor-neutral **agent harnesses** you install into another repository.
 
@@ -13,15 +13,15 @@ cSYMd lab kit. The UNCG-facing predecessor lives separately as
 
 ```bash
 # From a clone of this repo
-./cli/symkit list
-./cli/symkit show teaching
+./cli/symrig list
+./cli/symrig show teaching
 
 # New workspace (scaffold + instructor packs + grok adapter)
-./cli/symkit init ~/worx/my-course \
+./cli/symrig init ~/worx/my-course \
   --harness teaching --role instructor --scaffold
 
 # Existing repo
-./cli/symkit install ~/worx/existing-study \
+./cli/symrig install ~/worx/existing-study \
   --harness research --role researcher
 ```
 
@@ -33,12 +33,13 @@ student-safe / public paths.
 ```text
 src/                  Rust installer (catalog, merge, adapters)
 core/rules/           always-on rules copied into every target
+core/library/skills/  skill bodies; catalog.yaml assigns them to roles
 harnesses/
   teaching/           course templates, staff/learner agents
   research/           experiment tracking, reproducibility, paper layout
   ai/                 model-run and evaluation scaffolding
   biosignal/          later — SymWorx / biosignal focus
-cli/symkit            shim → target/debug/symkit
+cli/symrig            shim → target/debug/symrig
 examples/             how to add a custom overlay
 ```
 
@@ -48,11 +49,11 @@ examples/             how to add a custom overlay
 
 | Command | Purpose |
 |:--------|:--------|
-| `symkit list` | Harnesses, roles, pack summaries |
-| `symkit show <harness>` | Role matrix and on-disk paths |
-| `symkit init [dir]` | Create or activate a workspace |
-| `symkit install <dir>` | Install packs into an existing repo |
-| `symkit adapt <dir>` | Rewrite vendor adapters only |
+| `symrig list` | Harnesses, roles, pack summaries |
+| `symrig show <harness>` | Role matrix and on-disk paths |
+| `symrig init [dir]` | Create or activate a workspace |
+| `symrig install <dir>` | Install packs into an existing repo |
+| `symrig adapt <dir>` | Rewrite vendor adapters only |
 
 Adapters default to **grok**. Canonical content always lands in `AGENTS.md` +
 `.agents/` (+ `docs/`). Use `--adapters all` or `--adapters none`.
@@ -74,7 +75,7 @@ explicitly (`--pack`).
 **Usually commit:** `AGENTS.md` (if you want shared defaults), `docs/` literacy
 guides, workspace scaffold (`assignments/`, `analysis/`, …).
 
-**Usually do not commit:** `.agents/`, `.grok/`, `.claude/`, `.codex/`, `.symkit/`.
+**Usually do not commit:** `.agents/`, `.grok/`, `.claude/`, `.codex/`, `.symrig/`.
 The installer adds those patterns to the target `.gitignore`.
 
 Staff, instructor, and TA packs must not land on student-visible branches.
@@ -86,7 +87,7 @@ cargo test
 ./tests/smoke.sh
 ```
 
-Requires a Rust toolchain. `./cli/symkit` builds the debug binary if needed.
+Requires a Rust toolchain. `./cli/symrig` builds the debug binary if needed.
 
 ## Contributing
 

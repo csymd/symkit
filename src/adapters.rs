@@ -111,7 +111,7 @@ fn write_claude_pointer(target: &Path) -> Result<()> {
     if target.join("AGENTS.md").is_file() {
         fs::write(
             target.join("CLAUDE.md"),
-            "@AGENTS.md\n\n<!-- Adapter for Claude Code. Canonical always-on rules live in AGENTS.md (symkit). -->\n",
+            "@AGENTS.md\n\n<!-- Adapter for Claude Code. Canonical always-on rules live in AGENTS.md (symrig). -->\n",
         )?;
         println!("  adapter CLAUDE.md → @AGENTS.md");
     }

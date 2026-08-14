@@ -20,7 +20,7 @@ pub fn is_kit_root(dir: &Path) -> bool {
 }
 
 pub fn find_kit_root() -> Result<PathBuf> {
-    if let Ok(raw) = env::var("SYMKIT_ROOT") {
+    if let Ok(raw) = env::var("SYMRIG_ROOT").or_else(|_| env::var("SYMKIT_ROOT")) {
         let p = PathBuf::from(raw);
         if is_kit_root(&p) {
             return Ok(std::fs::canonicalize(&p).unwrap_or(p));

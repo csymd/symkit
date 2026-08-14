@@ -28,6 +28,8 @@ pub struct Catalog {
     #[serde(default)]
     pub canonical: Canonical,
     #[serde(default)]
+    pub library: Library,
+    #[serde(default)]
     pub core: CorePaths,
     #[serde(default)]
     pub harnesses: BTreeMap<String, Harness>,
@@ -56,13 +58,52 @@ pub struct Canonical {
 }
 
 fn default_state() -> String {
-    ".symkit/state.yaml".into()
+    ".symrig/state.yaml".into()
+}
+
+#[derive(Debug, Clone, Default, Deserialize)]
+pub struct Library {
+    #[serde(default)]
+    pub skills: String,
 }
 
 #[derive(Debug, Clone, Default, Deserialize)]
 pub struct CorePaths {
     #[serde(default)]
     pub rules: String,
+    #[serde(default)]
+    pub always_skills: Vec<String>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(untagged)]
+pub enum RoleSpec {
+    Packages(Vec<String>),
+    Assign(RoleAssign),
+}
+
+#[derive(Debug, Clone, Default, Deserialize)]
+pub struct RoleAssign {
+    #[serde(default)]
+    pub packages: Vec<String>,
+    #[serde(default)]
+    pub skills: Vec<String>,
+}
+
+impl RoleSpec {
+    pub fn packages(&self) -> &[String] {
+        match self {
+            RoleSpec::Packages(v) => v,
+            RoleSpec::Assign(a) => &a.packages,
+        }
+    }
+
+    pub fn skills(&self) -> &[String] {
+        match self {
+            RoleSpec::Packages(_) => &[],
+            RoleSpec::Assign(a) => &a.skills,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -78,7 +119,7 @@ pub struct Harness {
     #[serde(default)]
     pub packages: BTreeMap<String, PackageMeta>,
     #[serde(default)]
-    pub roles: BTreeMap<String, Vec<String>>,
+    pub roles: BTreeMap<String, RoleSpec>,
     #[serde(default)]
     pub prune: BTreeMap<String, PruneSpec>,
 }
@@ -111,11 +152,13 @@ pub struct Resolve {
     pub harness: String,
     pub role: String,
     pub packages: Vec<String>,
+    pub skills: Vec<String>,
     pub private: Vec<String>,
     pub student_safe: Vec<String>,
     pub workspace: String,
     pub prune: PruneSpec,
     pub core_rules: String,
+    pub library_skills: String,
 }
 
 impl Catalog {
@@ -141,7 +184,7 @@ impl Catalog {
             return Err(Error::NotInstallable(harness.to_string(), h.status.clone()));
         }
 
-        let (used_role, selected) = if extra_packs.is_empty() {
+        let (used_role, selected, role_skills) = if extra_packs.is_empty() {
             let used = role
                 .filter(|r| !r.is_empty())
                 .map(str::to_string)
@@ -154,14 +197,14 @@ impl Catalog {
                     }
                 })
                 .ok_or_else(|| Error::RoleRequired(harness.to_string()))?;
-            let packs = h.roles.get(&used).cloned().ok_or_else(|| Error::UnknownRole {
+            let spec = h.roles.get(&used).ok_or_else(|| Error::UnknownRole {
                 role: used.clone(),
                 harness: harness.to_string(),
                 known: join_keys(&h.roles),
             })?;
-            (used, packs)
+            (used, spec.packages().to_vec(), spec.skills().to_vec())
         } else {
-            (role.unwrap_or("").to_string(), extra_packs.to_vec())
+            (role.unwrap_or("").to_string(), extra_packs.to_vec(), Vec::new())
         };
 
         let unknown: Vec<_> = selected
@@ -187,16 +230,19 @@ impl Catalog {
             .cloned()
             .collect();
         let prune = h.prune.get(&used_role).cloned().unwrap_or_default();
+        let skills = merge_skill_names(&self.core.always_skills, &role_skills);
 
         Ok(Resolve {
             harness: harness.to_string(),
             role: used_role,
             packages: selected,
+            skills,
             private,
             student_safe,
             workspace: h.workspace.clone(),
             prune,
             core_rules: self.core.rules.clone(),
+            library_skills: self.library.skills.clone(),
         })
     }
 
@@ -221,7 +267,7 @@ impl Catalog {
     pub fn format_list(&self) -> String {
         let mut out = String::new();
         let name = if self.kit.name.is_empty() {
-            "symkit"
+            "symrig"
         } else {
             &self.kit.name
         };
@@ -255,12 +301,30 @@ impl Catalog {
             let safe = if meta.student_safe { "yes" } else { "no" };
             out.push_str(&format!("{pkg}\t{safe}\t{}\t{}\n", meta.path, meta.description));
         }
-        out.push_str("ROLE\tPACKAGES\n");
-        for (role, packs) in &h.roles {
-            out.push_str(&format!("{role}\t{}\n", packs.join(" ")));
+        out.push_str("ROLE\tPACKAGES\tSKILLS\n");
+        for (role, spec) in &h.roles {
+            out.push_str(&format!(
+                "{role}\t{}\t{}\n",
+                spec.packages().join(" "),
+                spec.skills().join(" ")
+            ));
         }
         Ok(out)
     }
+
+    pub fn skill_path(&self, name: &str) -> PathBuf {
+        PathBuf::from(&self.library.skills).join(name)
+    }
+}
+
+fn merge_skill_names(always: &[String], role: &[String]) -> Vec<String> {
+    let mut out = Vec::new();
+    for name in always.iter().chain(role.iter()) {
+        if !name.is_empty() && !out.iter().any(|s| s == name) {
+            out.push(name.clone());
+        }
+    }
+    out
 }
 
 fn join_keys<V>(map: &BTreeMap<String, V>) -> String {
@@ -288,6 +352,29 @@ mod tests {
         assert_eq!(r.private, ["staff", "instructor"]);
         assert_eq!(r.student_safe, ["shared"]);
         assert_eq!(r.prune.agents, ["ta"]);
+        assert!(r.skills.contains(&"check-citations".into()));
+        assert!(r.skills.contains(&"write-gherkin".into()));
+        assert!(r.skills.contains(&"course-prep".into()));
+        assert_eq!(r.library_skills, "core/library/skills");
+    }
+
+    #[test]
+    fn resolve_researcher_skills() {
+        let cat = load_repo();
+        let r = cat.resolve("research", Some("researcher"), &[]).unwrap();
+        assert_eq!(r.packages, ["shared"]);
+        assert!(r.skills.contains(&"write-gherkin".into()));
+        assert!(r.skills.contains(&"write-manuscript".into()));
+        assert!(!r.skills.contains(&"course-prep".into()));
+    }
+
+    #[test]
+    fn resolve_learner_omits_staff_skills() {
+        let cat = load_repo();
+        let r = cat.resolve("teaching", Some("learner"), &[]).unwrap();
+        assert!(r.skills.contains(&"lab-tutor".into()));
+        assert!(!r.skills.contains(&"write-gherkin".into()));
+        assert!(!r.skills.contains(&"evaluate-content".into()));
     }
 
     #[test]
@@ -320,6 +407,7 @@ mod tests {
             .unwrap();
         assert_eq!(r.packages, ["shared", "learner"]);
         assert!(r.role.is_empty());
+        assert_eq!(r.skills, ["check-citations"]);
     }
 
     #[test]

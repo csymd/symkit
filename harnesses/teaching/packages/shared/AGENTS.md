@@ -59,5 +59,6 @@ student handbook under faculty packs.
 
 ## Skills
 
-On-demand procedures live under `.agents/skills/` (e.g. `release-materials`).
-Use them when the task matches their description.
+On-demand procedures live under `.agents/skills/` (bodies come from the kit
+library; `catalog.yaml` decides which roles receive them). Use a skill when
+the task matches its description.

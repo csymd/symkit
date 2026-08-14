@@ -1,11 +1,11 @@
 # Copyright (c) 2026, PalEm Dynamics LLC
 # Licensed under the Apache License, Version 2.0.
 
-# symkit catalog — single source of truth for cli/symkit
-version: 3
+# symrig catalog — single source of truth for cli/symrig
+version: 4
 
 kit:
-  name: symkit
+  name: symrig
   description: Installable agent harnesses for teaching, research, and AI work
 
 adapters:
@@ -29,10 +29,14 @@ canonical:
   rules: .agents/rules
   skills: .agents/skills
   agents: .agents/agents
-  state: .symkit/state.yaml
+  state: .symrig/state.yaml
+
+library:
+  skills: core/library/skills
 
 core:
   rules: core/rules
+  always_skills: [check-citations]
   templates: core/templates
 
 harnesses:
@@ -47,11 +51,11 @@ harnesses:
         path: harnesses/teaching/packages/shared
         student_safe: true
       staff:
-        description: Engagement norms, evaluate-content, write-gherkin (local only)
+        description: Engagement norms (evaluate-content is assigned via role skills)
         path: harnesses/teaching/packages/staff
         student_safe: false
       instructor:
-        description: Instructor agent plus course-prep, week-plan, assignment-review, accessibility-review
+        description: Instructor agent plus instructor-only rules
         path: harnesses/teaching/packages/instructor
         student_safe: false
       ta:
@@ -63,14 +67,28 @@ harnesses:
         path: harnesses/teaching/packages/learner
         student_safe: true
     roles:
-      instructor: [shared, staff, instructor]
-      faculty: [shared, staff, instructor]
-      ta: [shared, staff, ta]
-      learner: [shared, learner]
-      materials: [shared]
+      instructor:
+        packages: [shared, staff, instructor]
+        skills:
+          [write-gherkin, evaluate-content, course-prep, week-plan,
+           assignment-review, accessibility-review, release-materials]
+      faculty:
+        packages: [shared, staff, instructor]
+        skills:
+          [write-gherkin, evaluate-content, course-prep, week-plan,
+           assignment-review, accessibility-review, release-materials]
+      ta:
+        packages: [shared, staff, ta]
+        skills: [write-gherkin, evaluate-content]
+      learner:
+        packages: [shared, learner]
+        skills:
+          [check-understanding, create-and-revise-docs, lab-tutor, study-plan]
+      materials:
+        packages: [shared]
+        skills: [write-gherkin, release-materials]
     prune:
       ta:
-        skills: [course-prep, week-plan, assignment-review, accessibility-review]
         agents: [instructor]
         rules: [course-prep, week-plan, assignment-review, accessibility]
       instructor:
@@ -78,7 +96,6 @@ harnesses:
       faculty:
         agents: [ta]
       learner:
-        skills: [course-prep, week-plan, assignment-review, accessibility-review, evaluate-content, release-materials]
         agents: [instructor, ta, materials-author]
         rules: [course-prep, week-plan, assignment-review, accessibility, evaluate-content, student-engagement]
 
@@ -93,8 +110,14 @@ harnesses:
         path: harnesses/research/packages/shared
         student_safe: true
     roles:
-      researcher: [shared]
-      materials: [shared]
+      researcher:
+        packages: [shared]
+        skills:
+          [write-gherkin, study-layout, repro-check, write-manuscript,
+           write-abstract, review-manuscript, lit-matrix, response-to-reviewers]
+      materials:
+        packages: [shared]
+        skills: [write-gherkin, study-layout, repro-check]
     prune: {}
 
   ai:
@@ -108,8 +131,12 @@ harnesses:
         path: harnesses/ai/packages/shared
         student_safe: true
     roles:
-      experimenter: [shared]
-      materials: [shared]
+      experimenter:
+        packages: [shared]
+        skills: [config-check, eval-run, repro-check]
+      materials:
+        packages: [shared]
+        skills: [config-check]
     prune: {}
 
   biosignal:

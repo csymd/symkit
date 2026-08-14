@@ -62,6 +62,12 @@ pub fn preview(req: &InstallRequest) {
         req.resolved.packages.join(" ")
     };
     println!("Packs:    {packs}");
+    let skills = if req.resolved.skills.is_empty() {
+        "(none)".to_string()
+    } else {
+        req.resolved.skills.join(" ")
+    };
+    println!("Skills:   {skills}");
     let adapters = if req.adapters.is_empty() {
         "none".to_string()
     } else {
@@ -136,7 +142,14 @@ pub fn run(req: &InstallRequest) -> Result<()> {
     }
 
     if req.prune {
-        prune_for_resolve(&req.target, &req.resolved.prune)?;
+        let mut prune = req.resolved.prune.clone();
+        prune.skills = derived_skill_prune(
+            &req.kit_root,
+            &req.resolved.library_skills,
+            &req.resolved.skills,
+            prune.skills,
+        )?;
+        prune_for_resolve(&req.target, &prune)?;
     }
 
     if !req.resolved.core_rules.is_empty() {
@@ -147,6 +160,8 @@ pub fn run(req: &InstallRequest) -> Result<()> {
             println!("  .agents/rules/ ← {}/", req.resolved.core_rules);
         }
     }
+
+    install_library_skills(req)?;
 
     for pkg in &req.resolved.packages {
         install_package(&req.kit_root, &req.target, &req.catalog, &req.resolved.harness, pkg)?;
@@ -230,28 +245,84 @@ fn install_package(kit: &Path, target: &Path, catalog: &Catalog, harness: &str, 
     Ok(())
 }
 
+fn install_library_skills(req: &InstallRequest) -> Result<()> {
+    if req.resolved.skills.is_empty() {
+        return Ok(());
+    }
+    println!("Installing skills");
+    for name in &req.resolved.skills {
+        let rel = req.catalog.skill_path(name);
+        let src = req.kit_root.join(&rel);
+        if !src.is_dir() {
+            return Err(Error::UnknownSkill {
+                name: name.clone(),
+                path: src,
+            });
+        }
+        merge_tree(&src, &req.target.join(".agents").join("skills").join(name))?;
+        println!("  .agents/skills/{name}/ ← {}/", rel.display());
+    }
+    Ok(())
+}
+
+fn derived_skill_prune(
+    kit: &Path,
+    library_rel: &str,
+    keep: &[String],
+    extra: Vec<String>,
+) -> Result<Vec<String>> {
+    let mut names = extra;
+    if library_rel.is_empty() {
+        names.sort();
+        names.dedup();
+        return Ok(names);
+    }
+    let dir = kit.join(library_rel);
+    if dir.is_dir() {
+        for entry in fs::read_dir(&dir)? {
+            let entry = entry?;
+            if !entry.file_type()?.is_dir() {
+                continue;
+            }
+            let name = entry.file_name().to_string_lossy().into_owned();
+            if name.starts_with('.') {
+                continue;
+            }
+            if !keep.iter().any(|k| k == &name) {
+                names.push(name);
+            }
+        }
+    }
+    names.sort();
+    names.dedup();
+    Ok(names)
+}
+
 fn prune_for_resolve(target: &Path, prune: &PruneSpec) -> Result<()> {
     if prune.skills.is_empty() && prune.agents.is_empty() && prune.rules.is_empty() {
         return Ok(());
     }
-    println!("Pruning leftover role paths...");
+    let mut any = false;
     for name in &prune.skills {
-        prune_named(target, "skills", name)?;
+        any |= prune_named(target, "skills", name, any)?;
     }
     for name in &prune.agents {
-        prune_named(target, "agents", name)?;
+        any |= prune_named(target, "agents", name, any)?;
     }
     for name in &prune.rules {
-        prune_named(target, "rules", name)?;
+        any |= prune_named(target, "rules", name, any)?;
     }
-    println!();
+    if any {
+        println!();
+    }
     Ok(())
 }
 
-fn prune_named(target: &Path, kind: &str, name: &str) -> Result<()> {
+fn prune_named(target: &Path, kind: &str, name: &str, header_done: bool) -> Result<bool> {
     if name.is_empty() {
-        return Ok(());
+        return Ok(false);
     }
+    let mut hit = false;
     let vendors: &[&str] = match kind {
         "skills" => &[".agents", ".grok", ".claude", ".codex"],
         _ => &[".agents", ".grok", ".claude"],
@@ -265,20 +336,24 @@ fn prune_named(target: &Path, kind: &str, name: &str) -> Result<()> {
         };
         let p = target.join(&rel);
         if p.exists() {
+            if !header_done && !hit {
+                println!("Pruning leftover role paths...");
+            }
             if p.is_dir() {
                 fs::remove_dir_all(&p)?;
             } else {
                 fs::remove_file(&p)?;
             }
             println!("  prune {rel}");
+            hit = true;
         }
     }
-    Ok(())
+    Ok(hit)
 }
 
 fn write_install_state(target: &Path, catalog: &Catalog, resolved: &Resolve, adapters: &[String]) -> Result<()> {
     let rel = if catalog.canonical.state.is_empty() {
-        ".symkit/state.yaml".to_string()
+        ".symrig/state.yaml".to_string()
     } else {
         catalog.canonical.state.clone()
     };
@@ -287,10 +362,11 @@ fn write_install_state(target: &Path, catalog: &Catalog, resolved: &Resolve, ada
         fs::create_dir_all(parent)?;
     }
     let body = format!(
-        "harness: {}\nrole: {}\npackages: [{}]\nadapters: [{}]\n",
+        "harness: {}\nrole: {}\npackages: [{}]\nskills: [{}]\nadapters: [{}]\n",
         resolved.harness,
         resolved.role,
         resolved.packages.join(" "),
+        resolved.skills.join(" "),
         adapters.join(" ")
     );
     fs::write(&path, body)?;
@@ -300,11 +376,13 @@ fn write_install_state(target: &Path, catalog: &Catalog, resolved: &Resolve, ada
 
 fn read_existing_harness(target: &Path, catalog: &Catalog) -> Option<String> {
     let rel = if catalog.canonical.state.is_empty() {
-        ".symkit/state.yaml".to_string()
+        ".symrig/state.yaml".to_string()
     } else {
         catalog.canonical.state.clone()
     };
-    let text = fs::read_to_string(target.join(rel)).ok()?;
+    let text = fs::read_to_string(target.join(&rel))
+        .ok()
+        .or_else(|| fs::read_to_string(target.join(".symkit/state.yaml")).ok())?;
     for line in text.lines() {
         if let Some(rest) = line.strip_prefix("harness:") {
             let v = rest.trim();

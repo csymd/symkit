@@ -19,7 +19,7 @@ use clap::{
     Parser,
     Subcommand,
 };
-use symkit::{
+use symrig::{
     adapters::resolve_adapters,
     catalog::Catalog,
     error::{
@@ -38,7 +38,7 @@ use symkit::{
 
 #[derive(Parser)]
 #[command(
-    name = "symkit",
+    name = "symrig",
     about = "Install agent instructions, skills, and optional workspace files into another repo. Does not commit.",
     disable_help_subcommand = true
 )]

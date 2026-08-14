@@ -24,6 +24,8 @@ You assist the **instructor of record** for a course.
 | `assignment-review` | Pre-ship QA of assignment/lab handouts and rubrics |
 | `accessibility-review` | Pre-ship document/formatting access QA |
 | `evaluate-content` | Student submissions (and light materials QA) |
+| `write-gherkin` | Shared lab/assignment success criteria (not an answer key) |
+| `check-citations` | Claim ↔ source integrity on handouts, lectures, or assigned readings |
 | `release-materials` | When present — student-facing release checklist |
 
 ## Always-on norms

@@ -11,7 +11,7 @@ pub type Result<T> = std::result::Result<T, Error>;
 pub enum Error {
     #[error("catalog not found: {0}")]
     CatalogMissing(PathBuf),
-    #[error("cannot find catalog.yaml (set SYMKIT_ROOT or run from a symkit checkout)")]
+    #[error("cannot find catalog.yaml (set SYMRIG_ROOT or run from a symrig checkout)")]
     KitRootNotFound,
     #[error("unknown harness '{name}' (have: {known})")]
     UnknownHarness { name: String, known: String },
@@ -31,6 +31,8 @@ pub enum Error {
     UnknownPackage { harness: String, package: String },
     #[error("package path missing: {0}")]
     PackagePathMissing(PathBuf),
+    #[error("unknown library skill '{name}' (looked in {path})")]
+    UnknownSkill { name: String, path: PathBuf },
     #[error("unknown adapter '{0}' (grok|claude|codex|all|none)")]
     UnknownAdapter(String),
     #[error("missing target directory")]
@@ -39,11 +41,11 @@ pub enum Error {
     MissingHarness,
     #[error("target is not a directory: {0}")]
     TargetNotDir(PathBuf),
-    #[error("refusing to install into the symkit repo itself")]
+    #[error("refusing to install into the symrig repo itself")]
     RefuseSelfInstall,
     #[error("refusing to write without --yes when stdin is not a TTY")]
     NeedYes,
-    #[error("usage: symkit show <harness>")]
+    #[error("usage: symrig show <harness>")]
     ShowUsage,
     #[error("{0}")]
     Io(#[from] std::io::Error),

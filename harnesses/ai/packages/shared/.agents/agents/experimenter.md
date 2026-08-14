@@ -20,6 +20,7 @@ You assist someone running model experiments in this repo.
 |:------|:----|
 | `config-check` | Validate config vs scripts and documented phases |
 | `eval-run` | How to log a run and where metrics go |
+| `repro-check` | Environment, run instructions, artifact paths |
 
 ## Stance
 

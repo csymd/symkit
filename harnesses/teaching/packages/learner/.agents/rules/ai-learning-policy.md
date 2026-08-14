@@ -12,7 +12,7 @@ Canonical student expectations (when installed in a course):
 - `docs/ai-what-to-expect.md`
 - `docs/ai/workflow.md` and siblings under `docs/ai/`
 
-Canonical kit: the teaching **learner** pack in symkit.
+Canonical kit: the teaching **learner** pack in symrig.
 
 ## Agent reminders
 

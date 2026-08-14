@@ -2,12 +2,12 @@
 # Copyright (c) 2026, PalEm Dynamics LLC
 # Licensed under the Apache License, Version 2.0.
 
-# Smoke tests for cli/symkit. Run from repo root: ./tests/smoke.sh
+# Smoke tests for cli/symrig. Run from repo root: ./tests/smoke.sh
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-CLI="$ROOT/cli/symkit"
-WORKDIR="$(mktemp -d "${TMPDIR:-/tmp}/symkit-smoke.XXXXXX")"
+CLI="$ROOT/cli/symrig"
+WORKDIR="$(mktemp -d "${TMPDIR:-/tmp}/symrig-smoke.XXXXXX")"
 trap 'rm -rf "$WORKDIR"' EXIT
 
 fail() { echo "FAIL: $*" >&2; exit 1; }
@@ -24,8 +24,11 @@ mkdir -p "$T1"
 "$CLI" install "$T1" --harness teaching --role materials --yes
 [[ -f "$T1/AGENTS.md" ]] || fail "materials AGENTS.md"
 [[ -f "$T1/.agents/rules/data-handling.md" ]] || fail "core data-handling"
+[[ -f "$T1/.agents/skills/check-citations/SKILL.md" ]] || fail "core check-citations"
 [[ -f "$T1/.agents/skills/release-materials/SKILL.md" ]] || fail "release-materials"
+[[ -f "$T1/.agents/skills/write-gherkin/SKILL.md" ]] || fail "write-gherkin on materials"
 [[ -d "$T1/.agents/skills/course-prep" ]] && fail "course-prep should be absent on materials"
+[[ -d "$T1/.agents/skills/evaluate-content" ]] && fail "evaluate-content should be absent on materials"
 
 "$CLI" install "$T1" --harness teaching --role instructor --yes
 [[ -f "$T1/.agents/agents/instructor.md" ]] || fail "instructor agent"
@@ -33,7 +36,7 @@ mkdir -p "$T1"
 [[ -d "$T1/.agents/skills/accessibility-review" ]] || fail "accessibility-review after instructor"
 [[ -d "$T1/.grok/skills/course-prep" ]] || fail "grok adapter course-prep"
 [[ -d "$T1/.claude" ]] && fail "claude adapter should be absent by default"
-[[ -f "$T1/.symkit/state.yaml" ]] || fail "install state"
+[[ -f "$T1/.symrig/state.yaml" ]] || fail "install state"
 
 # TA prunes instructor-only
 "$CLI" install "$T1" --harness teaching --role ta --yes
@@ -42,6 +45,8 @@ mkdir -p "$T1"
 [[ -f "$T1/.agents/agents/instructor.md" ]] && fail "instructor agent should be pruned on ta"
 [[ -f "$T1/.agents/agents/ta.md" ]] || fail "ta agent"
 [[ -d "$T1/.agents/skills/evaluate-content" ]] || fail "evaluate-content stays for ta"
+[[ -f "$T1/.agents/skills/write-gherkin/SKILL.md" ]] || fail "write-gherkin stays for ta"
+[[ -d "$T1/.agents/skills/release-materials" ]] && fail "release-materials should be pruned on ta"
 
 # learner does not drop staff leftovers if we start clean
 T2="$WORKDIR/learner"
@@ -50,6 +55,8 @@ mkdir -p "$T2"
 [[ -f "$T2/docs/ai-what-to-expect.md" ]] || fail "learner docs"
 [[ -f "$T2/.agents/agents/learner.md" ]] || fail "learner agent"
 [[ -d "$T2/.agents/skills/evaluate-content" ]] && fail "staff skills must not install on learner"
+[[ -d "$T2/.agents/skills/write-gherkin" ]] && fail "write-gherkin must not install on learner"
+[[ -f "$T2/.agents/skills/lab-tutor/SKILL.md" ]] || fail "lab-tutor on learner"
 [[ -d "$T2/.grok" ]] && fail "--adapters none should skip grok"
 
 # init scaffold, no clobber
@@ -66,6 +73,10 @@ T4="$WORKDIR/study"
 "$CLI" init "$T4" --harness research --role researcher --scaffold --yes
 [[ -f "$T4/analysis/README.md" ]] || fail "research scaffold"
 [[ -f "$T4/.agents/skills/repro-check/SKILL.md" ]] || fail "repro-check"
+[[ -f "$T4/.agents/skills/check-citations/SKILL.md" ]] || fail "core check-citations on research"
+[[ -f "$T4/.agents/skills/write-gherkin/SKILL.md" ]] || fail "write-gherkin on research"
+[[ -f "$T4/.agents/skills/write-manuscript/SKILL.md" ]] || fail "write-manuscript on research"
+[[ -d "$T4/.agents/skills/course-prep" ]] && fail "course-prep must not install on research"
 
 T5="$WORKDIR/eval"
 "$CLI" init "$T5" --harness ai --role experimenter --scaffold --yes
@@ -87,7 +98,7 @@ grep -q 'refusing' "$WORKDIR/err2" || fail "kit-root error message"
 
 # gitignore additive
 grep -q '.agents/' "$T1/.gitignore" || fail "gitignore agents"
-grep -q '.symkit/' "$T1/.gitignore" || fail "gitignore state"
+grep -q '.symrig/' "$T1/.gitignore" || fail "gitignore state"
 
 # adapters all
 T6="$WORKDIR/alladapt"

@@ -1,6 +1,6 @@
 # Experiment workspace
 
-Scaffolded by [symkit](https://github.com/csymd/symkit) (`ai` harness).
+Scaffolded by [symrig](https://github.com/csymd/symkit) (`ai` harness).
 
 | Path | Purpose |
 |:-----|:--------|

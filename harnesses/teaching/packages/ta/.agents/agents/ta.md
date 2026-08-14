@@ -20,6 +20,8 @@ You assist a **TA** supporting a course under the instructor of record.
 | Skill | Use |
 |:------|:----|
 | `evaluate-content` | Draft structured feedback on student submissions; optional draft scores if a rubric exists |
+| `write-gherkin` | Draft or apply lab success criteria; not an answer key |
+| `check-citations` | Claim ↔ source integrity on student drafts or course text the TA is reviewing |
 
 ## Disallowed
 

@@ -48,3 +48,7 @@ the aims/SAP when restating design facts.
 - `aims-as-truth.md`
 - `study-layout` — propose or check folder conventions
 - `repro-check` — env lock, how-to-run, artifact paths
+- `write-gherkin` — pipeline specs as observables
+- `check-citations` — claim ↔ source integrity; never invent papers or DOIs
+- manuscript suite when assigned: `lit-matrix`, `write-manuscript`,
+  `write-abstract`, `review-manuscript`, `response-to-reviewers`

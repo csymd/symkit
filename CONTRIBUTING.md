@@ -1,13 +1,13 @@
-# Contributing to symkit
+# Contributing to symrig
 
-Thank you for your interest in contributing to **symkit**.
+Thank you for your interest in contributing to **symrig**.
 We welcome contributions of all kinds—whether it's fixing a typo, improving
 documentation, reporting bugs, or adding a harness, package, or installer
 behavior.
 
 ## Our philosophy
 
-symkit is a **cSYMd** lab kit: vendor-neutral agent harnesses you install into
+symrig is a **cSYMd** lab kit: vendor-neutral agent harnesses you install into
 *other* repositories. It emphasizes **clarity** (catalog-driven, one source of
 truth), **privilege separation** (role packs on disk, not runtime ACL), and
 **safe defaults** (preview before write, never commit, never push).
@@ -80,8 +80,9 @@ conversation moving so we can merge high-quality contributions quickly.
 
 | Change | Put it in |
 |:-------|:----------|
-| Installer, adapters, catalog parser | `src/`, `cli/symkit` (shim) |
+| Installer, adapters, catalog parser | `src/`, `cli/symrig` (shim) |
 | Domain-agnostic always-on rules | `core/rules/` |
+| Skill bodies (placement in catalog) | `core/library/skills/` |
 | Authoring templates | `core/templates/` |
 | Teaching / research / AI content | `harnesses/<name>/packages/` |
 | Workspace files written by `init --scaffold` | `harnesses/<name>/workspace/` |
@@ -103,6 +104,6 @@ By participating, you agree to uphold this code in all project spaces.
 
 ---
 
-**Thank you for helping make symkit better.**
+**Thank you for helping make symrig better.**
 Your contributions support reusable, inspectable agent assistance for
 teaching, research, and experiment work.

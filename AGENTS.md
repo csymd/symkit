@@ -1,4 +1,4 @@
-# AGENTS.md — symkit development guidelines
+# AGENTS.md — symrig development guidelines
 
 This file contains instructions for agentic development tools working **in
 this repository** (the kit itself). It is not a harness package and is not
@@ -13,12 +13,12 @@ target receives. Edit **this** file when changing how we develop the kit.
 
 ## Project overview
 
-symkit is a **content + installer** kit, not an application server.
+symrig is a **content + installer** kit, not an application server.
 
 - **Canonical content:** `harnesses/<name>/packages/` (`AGENTS.md`,
   `.agents/{rules,skills,agents}`, `docs/`)
 - **Engine:** Rust crate (`src/`) + `catalog.yaml`
-- **Front door:** `cli/symkit` shim → `target/debug/symkit`
+- **Front door:** `cli/symrig` shim → `target/debug/symrig`
   (`list`, `show`, `init`, `install`, `adapt`)
 - **Adapters:** optional mirrors of `.agents/` into `.grok/`, `.claude/`,
   `.codex/` (default: grok)
@@ -44,7 +44,7 @@ honest about what they install.
 - Default adapters: **grok only**. `--adapters none` writes no vendor trees.
 - Scaffold does not overwrite existing files unless `--force`.
 - Gitignore in the target is **additive** (marker block for `.agents/`,
-  `.grok/`, `.claude/`, `.codex/`, `.symkit/`).
+  `.grok/`, `.claude/`, `.codex/`, `.symrig/`, and leftover `.symkit/`).
 - `biosignal` is `status: later` — listable, not installable.
 
 ### Working style
@@ -56,16 +56,17 @@ honest about what they install.
 - One harness per target (warn if a second is installed). Do not invent
   multi-harness merge semantics.
 - Copyright headers: engine (`src/`, CLI) and pack-owned installed content
-  (`AGENTS.md`, `.agents/`, pack `docs/`, `core/rules/`). Not on workspace
-  stubs or kit-internal README/docs. See DEVELOPMENT.md.
+  (`AGENTS.md`, `.agents/`, pack `docs/`, `core/rules/`,
+  `core/library/skills/`). Not on workspace stubs or kit-internal
+  README/docs. See DEVELOPMENT.md.
 
 ## Development commands
 
 ```bash
 cargo test
 cargo clippy -- -D warnings
-./cli/symkit list
-./cli/symkit show teaching
+./cli/symrig list
+./cli/symrig show teaching
 ./tests/smoke.sh
 ```
 
@@ -97,8 +98,9 @@ Requires a Rust toolchain (see [DEVELOPMENT.md](DEVELOPMENT.md)).
 | [`src/install.rs`](src/install.rs) | Scaffold, merge, prune, state |
 | [`src/adapters.rs`](src/adapters.rs) | Vendor mirrors |
 | [`src/main.rs`](src/main.rs) | clap CLI |
-| [`cli/symkit`](cli/symkit) | Shim that builds/execs the debug binary |
+| [`cli/symrig`](cli/symrig) | Shim that builds/execs the debug binary |
 | [`core/rules/`](core/rules/) | Always installed (`data-handling`, `secrets`) |
+| [`core/library/skills/`](core/library/skills/) | Skill bodies; `catalog.yaml` assigns them to roles |
 | [`tests/smoke.sh`](tests/smoke.sh) | Integration gate |
 | [`docs/authoring-a-harness.md`](docs/authoring-a-harness.md) | How to add a harness |
 

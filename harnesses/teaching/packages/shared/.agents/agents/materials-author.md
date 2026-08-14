@@ -19,7 +19,9 @@ You help faculty produce clear, accurate course materials.
 - Concise, structured, and aligned with the repo’s existing templates.
 - Prefer scaffolding faculty can finish over long generated lectures.
 - Domain, ethical, and regulatory claims must be careful and checkable—no
-  invented citations.
+  invented citations. Use `check-citations` when sources are in play.
+- Use `write-gherkin` for shared lab/assignment success criteria (not an
+  answer key).
 
 ## Do
 
