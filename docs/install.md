@@ -5,16 +5,16 @@ Clone this repo and run the CLI from the clone. No package registry.
 ```bash
 git clone https://github.com/csymd/symkit.git
 cd symkit
-./cli/symrig --help
+./cli/symkit --help
 ```
 
-Requires a Rust toolchain (`cargo` / `rustc`). `./cli/symrig` builds
-`target/debug/symrig` if it is missing.
+Requires a Rust toolchain (`cargo` / `rustc`). `./cli/symkit` builds
+`target/debug/symkit` if it is missing.
 
 ## New workspace
 
 ```bash
-./cli/symrig init ~/worx/my-course \
+./cli/symkit init ~/worx/my-course \
   --harness teaching --role instructor --scaffold --yes
 ```
 
@@ -24,7 +24,7 @@ merges agent packs, writes the grok adapter, and updates `.gitignore`.
 ## Existing repo
 
 ```bash
-./cli/symrig install ~/worx/existing --harness research --role researcher --yes
+./cli/symkit install ~/worx/existing --harness research --role researcher --yes
 ```
 
 ## Adapters
@@ -32,14 +32,14 @@ merges agent packs, writes the grok adapter, and updates `.gitignore`.
 Canonical content is always `AGENTS.md` + `.agents/`. Adapters are mirrors:
 
 ```bash
-./cli/symrig install DIR --harness teaching --role instructor --adapters all
-./cli/symrig adapt DIR --adapters none   # does not delete existing vendor trees
+./cli/symkit install DIR --harness teaching --role instructor --adapters all
+./cli/symkit adapt DIR --adapters none   # does not delete existing vendor trees
 ```
 
 Default: `grok` only.
 
 ## What not to do
 
-- Do not run init/install against the symrig repo itself.
-- Do not commit `.agents/`, `.grok/`, `.claude/`, `.codex/`, or `.symrig/`.
+- Do not run init/install against the symkit repo itself.
+- Do not commit `.agents/`, `.grok/`, `.claude/`, `.codex/`, or `.symkit/`.
 - Do not push staff/instructor/ta packs to a student-visible branch.

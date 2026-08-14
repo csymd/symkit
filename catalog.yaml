@@ -1,11 +1,11 @@
 # Copyright (c) 2026, PalEm Dynamics LLC
 # Licensed under the Apache License, Version 2.0.
 
-# symrig catalog — single source of truth for cli/symrig
+# symkit catalog — single source of truth for cli/symkit
 version: 4
 
 kit:
-  name: symrig
+  name: symkit
   description: Installable agent harnesses for teaching, research, and AI work
 
 adapters:
@@ -29,7 +29,7 @@ canonical:
   rules: .agents/rules
   skills: .agents/skills
   agents: .agents/agents
-  state: .symrig/state.yaml
+  state: .symkit/state.yaml
 
 library:
   skills: core/library/skills

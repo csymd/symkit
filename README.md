@@ -1,4 +1,4 @@
-# symrig
+# symkit
 
 Vendor-neutral **agent harnesses** you install into another repository.
 
@@ -13,15 +13,15 @@ cSYMd lab kit. The UNCG-facing predecessor lives separately as
 
 ```bash
 # From a clone of this repo
-./cli/symrig list
-./cli/symrig show teaching
+./cli/symkit list
+./cli/symkit show teaching
 
 # New workspace (scaffold + instructor packs + grok adapter)
-./cli/symrig init ~/worx/my-course \
+./cli/symkit init ~/worx/my-course \
   --harness teaching --role instructor --scaffold
 
 # Existing repo
-./cli/symrig install ~/worx/existing-study \
+./cli/symkit install ~/worx/existing-study \
   --harness research --role researcher
 ```
 
@@ -39,7 +39,7 @@ harnesses/
   research/           experiment tracking, reproducibility, paper layout
   ai/                 model-run and evaluation scaffolding
   biosignal/          later — SymWorx / biosignal focus
-cli/symrig            shim → target/debug/symrig
+cli/symkit            shim → target/debug/symkit
 examples/             how to add a custom overlay
 ```
 
@@ -49,11 +49,11 @@ examples/             how to add a custom overlay
 
 | Command | Purpose |
 |:--------|:--------|
-| `symrig list` | Harnesses, roles, pack summaries |
-| `symrig show <harness>` | Role matrix and on-disk paths |
-| `symrig init [dir]` | Create or activate a workspace |
-| `symrig install <dir>` | Install packs into an existing repo |
-| `symrig adapt <dir>` | Rewrite vendor adapters only |
+| `symkit list` | Harnesses, roles, pack summaries |
+| `symkit show <harness>` | Role matrix and on-disk paths |
+| `symkit init [dir]` | Create or activate a workspace |
+| `symkit install <dir>` | Install packs into an existing repo |
+| `symkit adapt <dir>` | Rewrite vendor adapters only |
 
 Adapters default to **grok**. Canonical content always lands in `AGENTS.md` +
 `.agents/` (+ `docs/`). Use `--adapters all` or `--adapters none`.
@@ -75,7 +75,7 @@ explicitly (`--pack`).
 **Usually commit:** `AGENTS.md` (if you want shared defaults), `docs/` literacy
 guides, workspace scaffold (`assignments/`, `analysis/`, …).
 
-**Usually do not commit:** `.agents/`, `.grok/`, `.claude/`, `.codex/`, `.symrig/`.
+**Usually do not commit:** `.agents/`, `.grok/`, `.claude/`, `.codex/`, `.symkit/`.
 The installer adds those patterns to the target `.gitignore`.
 
 Staff, instructor, and TA packs must not land on student-visible branches.
@@ -87,7 +87,7 @@ cargo test
 ./tests/smoke.sh
 ```
 
-Requires a Rust toolchain. `./cli/symrig` builds the debug binary if needed.
+Requires a Rust toolchain. `./cli/symkit` builds the debug binary if needed.
 
 ## Contributing
 

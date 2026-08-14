@@ -14,8 +14,8 @@ Course materials, staff agents, and optional learner literacy.
 Install:
 
 ```bash
-./cli/symrig install /path/to/course --harness teaching --role instructor
-./cli/symrig init /path/to/new-course --harness teaching --role instructor --scaffold
+./cli/symkit install /path/to/course --harness teaching --role instructor
+./cli/symkit init /path/to/new-course --harness teaching --role instructor --scaffold
 ```
 
 Do not commit `staff`, `instructor`, or `ta` packs into student-visible trees.

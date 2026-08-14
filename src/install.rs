@@ -353,7 +353,7 @@ fn prune_named(target: &Path, kind: &str, name: &str, header_done: bool) -> Resu
 
 fn write_install_state(target: &Path, catalog: &Catalog, resolved: &Resolve, adapters: &[String]) -> Result<()> {
     let rel = if catalog.canonical.state.is_empty() {
-        ".symrig/state.yaml".to_string()
+        ".symkit/state.yaml".to_string()
     } else {
         catalog.canonical.state.clone()
     };
@@ -376,13 +376,11 @@ fn write_install_state(target: &Path, catalog: &Catalog, resolved: &Resolve, ada
 
 fn read_existing_harness(target: &Path, catalog: &Catalog) -> Option<String> {
     let rel = if catalog.canonical.state.is_empty() {
-        ".symrig/state.yaml".to_string()
+        ".symkit/state.yaml".to_string()
     } else {
         catalog.canonical.state.clone()
     };
-    let text = fs::read_to_string(target.join(&rel))
-        .ok()
-        .or_else(|| fs::read_to_string(target.join(".symkit/state.yaml")).ok())?;
+    let text = fs::read_to_string(target.join(rel)).ok()?;
     for line in text.lines() {
         if let Some(rest) = line.strip_prefix("harness:") {
             let v = rest.trim();

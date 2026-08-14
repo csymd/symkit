@@ -1,6 +1,6 @@
 # Course workspace
 
-Scaffolded by [symrig](https://github.com/csymd/symkit) (`teaching` harness).
+Scaffolded by [symkit](https://github.com/csymd/symkit) (`teaching` harness).
 
 ## Layout
 

@@ -1,4 +1,4 @@
-# AGENTS.md — symrig development guidelines
+# AGENTS.md — symkit development guidelines
 
 This file contains instructions for agentic development tools working **in
 this repository** (the kit itself). It is not a harness package and is not
@@ -13,12 +13,12 @@ target receives. Edit **this** file when changing how we develop the kit.
 
 ## Project overview
 
-symrig is a **content + installer** kit, not an application server.
+symkit is a **content + installer** kit, not an application server.
 
 - **Canonical content:** `harnesses/<name>/packages/` (`AGENTS.md`,
   `.agents/{rules,skills,agents}`, `docs/`)
 - **Engine:** Rust crate (`src/`) + `catalog.yaml`
-- **Front door:** `cli/symrig` shim → `target/debug/symrig`
+- **Front door:** `cli/symkit` shim → `target/debug/symkit`
   (`list`, `show`, `init`, `install`, `adapt`)
 - **Adapters:** optional mirrors of `.agents/` into `.grok/`, `.claude/`,
   `.codex/` (default: grok)
@@ -44,7 +44,7 @@ honest about what they install.
 - Default adapters: **grok only**. `--adapters none` writes no vendor trees.
 - Scaffold does not overwrite existing files unless `--force`.
 - Gitignore in the target is **additive** (marker block for `.agents/`,
-  `.grok/`, `.claude/`, `.codex/`, `.symrig/`, and leftover `.symkit/`).
+  `.grok/`, `.claude/`, `.codex/`, `.symkit/`).
 - `biosignal` is `status: later` — listable, not installable.
 
 ### Working style
@@ -65,8 +65,8 @@ honest about what they install.
 ```bash
 cargo test
 cargo clippy -- -D warnings
-./cli/symrig list
-./cli/symrig show teaching
+./cli/symkit list
+./cli/symkit show teaching
 ./tests/smoke.sh
 ```
 
@@ -98,7 +98,7 @@ Requires a Rust toolchain (see [DEVELOPMENT.md](DEVELOPMENT.md)).
 | [`src/install.rs`](src/install.rs) | Scaffold, merge, prune, state |
 | [`src/adapters.rs`](src/adapters.rs) | Vendor mirrors |
 | [`src/main.rs`](src/main.rs) | clap CLI |
-| [`cli/symrig`](cli/symrig) | Shim that builds/execs the debug binary |
+| [`cli/symkit`](cli/symkit) | Shim that builds/execs the debug binary |
 | [`core/rules/`](core/rules/) | Always installed (`data-handling`, `secrets`) |
 | [`core/library/skills/`](core/library/skills/) | Skill bodies; `catalog.yaml` assigns them to roles |
 | [`tests/smoke.sh`](tests/smoke.sh) | Integration gate |

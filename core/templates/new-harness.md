@@ -12,8 +12,8 @@
 6. Check with:
 
 ```bash
-./cli/symrig show <name>
-./cli/symrig init /tmp/symrig-try --harness <name> --role <role> --scaffold --yes
+./cli/symkit show <name>
+./cli/symkit init /tmp/symkit-try --harness <name> --role <role> --scaffold --yes
 ```
 
 Keep `AGENTS.md` short. Long procedures belong in skills.

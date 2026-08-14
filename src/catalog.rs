@@ -58,7 +58,7 @@ pub struct Canonical {
 }
 
 fn default_state() -> String {
-    ".symrig/state.yaml".into()
+    ".symkit/state.yaml".into()
 }
 
 #[derive(Debug, Clone, Default, Deserialize)]
@@ -267,7 +267,7 @@ impl Catalog {
     pub fn format_list(&self) -> String {
         let mut out = String::new();
         let name = if self.kit.name.is_empty() {
-            "symrig"
+            "symkit"
         } else {
             &self.kit.name
         };

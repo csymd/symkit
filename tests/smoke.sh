@@ -2,12 +2,12 @@
 # Copyright (c) 2026, PalEm Dynamics LLC
 # Licensed under the Apache License, Version 2.0.
 
-# Smoke tests for cli/symrig. Run from repo root: ./tests/smoke.sh
+# Smoke tests for cli/symkit. Run from repo root: ./tests/smoke.sh
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-CLI="$ROOT/cli/symrig"
-WORKDIR="$(mktemp -d "${TMPDIR:-/tmp}/symrig-smoke.XXXXXX")"
+CLI="$ROOT/cli/symkit"
+WORKDIR="$(mktemp -d "${TMPDIR:-/tmp}/symkit-smoke.XXXXXX")"
 trap 'rm -rf "$WORKDIR"' EXIT
 
 fail() { echo "FAIL: $*" >&2; exit 1; }
@@ -36,7 +36,7 @@ mkdir -p "$T1"
 [[ -d "$T1/.agents/skills/accessibility-review" ]] || fail "accessibility-review after instructor"
 [[ -d "$T1/.grok/skills/course-prep" ]] || fail "grok adapter course-prep"
 [[ -d "$T1/.claude" ]] && fail "claude adapter should be absent by default"
-[[ -f "$T1/.symrig/state.yaml" ]] || fail "install state"
+[[ -f "$T1/.symkit/state.yaml" ]] || fail "install state"
 
 # TA prunes instructor-only
 "$CLI" install "$T1" --harness teaching --role ta --yes
@@ -98,7 +98,7 @@ grep -q 'refusing' "$WORKDIR/err2" || fail "kit-root error message"
 
 # gitignore additive
 grep -q '.agents/' "$T1/.gitignore" || fail "gitignore agents"
-grep -q '.symrig/' "$T1/.gitignore" || fail "gitignore state"
+grep -q '.symkit/' "$T1/.gitignore" || fail "gitignore state"
 
 # adapters all
 T6="$WORKDIR/alladapt"

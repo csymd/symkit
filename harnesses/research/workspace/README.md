@@ -1,6 +1,6 @@
 # Study workspace
 
-Scaffolded by [symrig](https://github.com/csymd/symkit) (`research` harness).
+Scaffolded by [symkit](https://github.com/csymd/symkit) (`research` harness).
 
 | Path | Purpose |
 |:-----|:--------|

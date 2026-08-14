@@ -13,7 +13,7 @@ Student-safe AI literacy plus optional **learner** agent.
 Install:
 
 ```bash
-./cli/symrig install /path/to/course --harness teaching --role learner
+./cli/symkit install /path/to/course --harness teaching --role learner
 ```
 
 Commit the docs. Usually do not commit `.agents/`.

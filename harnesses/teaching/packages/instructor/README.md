@@ -6,7 +6,7 @@ and shared `write-gherkin` / `evaluate-content`) live in
 `core/library/skills/` and are assigned in `catalog.yaml`.
 
 ```bash
-./cli/symrig install /path/to/course --harness teaching --role instructor
+./cli/symkit install /path/to/course --harness teaching --role instructor
 ```
 
 | Contents | Path |

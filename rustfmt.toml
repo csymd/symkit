@@ -1,4 +1,4 @@
-# rustfmt.toml — SymRig
+# rustfmt.toml — SymKit
 # Manual: cargo fmt
 # Check:  cargo fmt -- --check
 #

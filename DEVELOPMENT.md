@@ -1,6 +1,6 @@
 # Development
 
-This document describes how to build, test, and extend the symrig repository.
+This document describes how to build, test, and extend the symkit repository.
 
 For guidelines when working with AI/agentic development tools, see
 [AGENTS.md](AGENTS.md). All contributors are expected to take full ownership
@@ -10,7 +10,7 @@ of submitted code. Human how-to for *using* the installer is in
 ## Prerequisites
 
 - Rust stable + Cargo (`rustc`, `cargo`)
-- Optional: `./cli/symrig` builds `target/debug/symrig` if it is missing
+- Optional: `./cli/symkit` builds `target/debug/symkit` if it is missing
 - No Python, no rsync, no network required for install
 
 ```bash
@@ -30,19 +30,19 @@ cargo fmt
 cargo clippy -- -D warnings
 
 # Discover (shim builds the debug binary if needed)
-./cli/symrig --help
-./cli/symrig list
-./cli/symrig show teaching
+./cli/symkit --help
+./cli/symkit list
+./cli/symkit show teaching
 
 # Or call the binary directly
 cargo run -- list
-./target/debug/symrig show teaching
+./target/debug/symkit show teaching
 
 # Smoke tests (creates a temp dir, then removes it)
 ./tests/smoke.sh
 
 # Dry-run a real target (no writes)
-./cli/symrig install /path/to/existing --harness research --role researcher --dry-run
+./cli/symkit install /path/to/existing --harness research --role researcher --dry-run
 ```
 
 Do **not** run `init` / `install` against this repository. The CLI refuses
@@ -54,13 +54,13 @@ that (`catalog.yaml` + `harnesses/` present).
 Cargo.toml            Rust installer crate
 src/                  catalog, install, adapters, gitignore
 catalog.yaml          harnesses, packages, roles, adapters (source of truth)
-cli/symrig            thin shim → target/debug/symrig
+cli/symkit            thin shim → target/debug/symkit
 core/rules/           installed into every target (.agents/rules/)
 core/library/skills/  skill bodies; catalog assigns which roles get them
 core/templates/       new-agent / new-rule / new-skill / new-harness
 harnesses/<name>/
   packages/<pkg>/     AGENTS.md, .agents/{rules,skills,agents}, docs/
-  workspace/          copied only by `symrig init --scaffold`
+  workspace/          copied only by `symkit init --scaffold`
 examples/             overlay pattern (not registered by default)
 docs/                 install, UX, authoring
 tests/smoke.sh        installer behavior
@@ -71,7 +71,7 @@ tests/smoke.sh        installer behavior
 
 ## How an install works
 
-1. `cli/symrig` execs the Rust binary; clap parses flags; `catalog.rs` resolves
+1. `cli/symkit` execs the Rust binary; clap parses flags; `catalog.rs` resolves
    harness + role + packs.
 2. Optional workspace scaffold (`init --scaffold`) copies files without
    overwriting unless `--force`.
@@ -85,8 +85,8 @@ tests/smoke.sh        installer behavior
 7. Selected adapters mirror `.agents/` into `.grok/`, `.claude/`, and/or
    `.codex/` (default: grok).
 8. Target `.gitignore` is updated additively (`.agents/`, vendor trees,
-   `.symrig/`).
-9. `.symrig/state.yaml` records harness, role, packs, adapters.
+   `.symkit/`).
+9. `.symkit/state.yaml` records harness, role, packs, adapters.
 10. The installer **never commits**.
 
 Private packs (`student_safe: false`) print a reminder. That is social, not
@@ -102,8 +102,8 @@ enforced access control.
 5. Check:
 
 ```bash
-./cli/symrig show <name>
-./cli/symrig init /tmp/symrig-try --harness <name> --role <role> --scaffold --yes
+./cli/symkit show <name>
+./cli/symkit init /tmp/symkit-try --harness <name> --role <role> --scaffold --yes
 ./tests/smoke.sh
 ```
 
@@ -139,7 +139,7 @@ Rust / C-style: `//`. Python, shell, YAML, TOML: `#`. Markdown: an HTML comment.
 
 **Keep** the short header on:
 
-- Engine: `src/`, `cli/symrig`, `tests/smoke.sh`, `Cargo.toml`, `catalog.yaml`
+- Engine: `src/`, `cli/symkit`, `tests/smoke.sh`, `Cargo.toml`, `catalog.yaml`
 - Pack-owned content the installer copies: package `AGENTS.md`,
   `.agents/{rules,skills,agents}`, package `docs/`, `core/rules/`,
   `core/library/skills/`
@@ -187,7 +187,7 @@ Do not force-push `main` or `develop`. This repo is a single Cargo package
 ## Releasing
 
 There is no package registry publish. Distribution is: clone
-`csymd/symkit` and run `./cli/symrig`.
+`csymd/symkit` and run `./cli/symkit`.
 
 When a slice is ready:
 

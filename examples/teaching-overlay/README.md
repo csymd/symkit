@@ -11,7 +11,7 @@ A course-specific package you can copy. It is **not** registered in
 4. Optionally add the pack to a role list, or install it on demand:
 
 ```bash
-./cli/symrig install /path/to/course \
+./cli/symkit install /path/to/course \
   --harness teaching --role instructor --also <your-id>
 ```
 

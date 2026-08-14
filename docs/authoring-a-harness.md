@@ -13,7 +13,7 @@ harnesses/<name>/
     .agents/rules/*.md
     .agents/agents/*.md
     docs/                     # merged into target docs/
-  workspace/                  # copied only by `symrig init --scaffold`
+  workspace/                  # copied only by `symkit init --scaffold`
 ```
 
 ## Register
@@ -29,8 +29,8 @@ Add the harness under `harnesses:` in `catalog.yaml`:
 ## Check
 
 ```bash
-./cli/symrig show <name>
-./cli/symrig init /tmp/symrig-try --harness <name> --role <role> --scaffold --yes
+./cli/symkit show <name>
+./cli/symkit init /tmp/symkit-try --harness <name> --role <role> --scaffold --yes
 ```
 
 See `core/templates/new-harness.md` and `examples/teaching-overlay/`.
