@@ -96,4 +96,6 @@ Requires a Rust toolchain. `./cli/symkit` builds the debug binary if needed.
 
 ## License
 
-Apache License 2.0. See [LICENSE](LICENSE).
+Apache License 2.0. See [LICENSE](LICENSE) and [NOTICE.md](NOTICE.md).
+
+Copyright (c) 2026, PalEm Dynamics LLC.

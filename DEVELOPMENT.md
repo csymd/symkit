@@ -120,8 +120,18 @@ role matrix. Copy `examples/teaching-overlay/` for the overlay pattern.
 
 ### Copyright headers
 
-Apache 2.0 covers the repo via [`LICENSE`](LICENSE), the README license
-section, and `Cargo.toml`. Do not stamp every file.
+Apache 2.0 covers the repo via [`LICENSE`](LICENSE), [`NOTICE.md`](NOTICE.md),
+the README license section, and `Cargo.toml`. Copyright is PalEm Dynamics LLC.
+Do not stamp every file.
+
+Use this two-line header (comment syntax for the file type):
+
+```
+Copyright (c) 2026, PalEm Dynamics LLC
+Licensed under the Apache License, Version 2.0.
+```
+
+Rust / C-style: `//`. Python, shell, YAML, TOML: `#`. Markdown: an HTML comment.
 
 **Keep** the short header on:
 

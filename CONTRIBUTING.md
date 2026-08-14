@@ -99,6 +99,7 @@ By participating, you agree to uphold this code in all project spaces.
 
 - Open an **issue** or **discussion** in the repository.
 - Lab context: [cSYMd](https://csymd.com) / [github.com/csymd](https://github.com/csymd).
+- Copyright is PalEm Dynamics LLC (Apache-2.0). See [LICENSE](LICENSE) and [NOTICE.md](NOTICE.md).
 
 ---
 

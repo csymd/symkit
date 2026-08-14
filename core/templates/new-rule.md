@@ -1,3 +1,8 @@
+<!--
+Copyright (c) 2026, PalEm Dynamics LLC
+Licensed under the Apache License, Version 2.0.
+-->
+
 # <Rule title>
 
 Always-on modular policy. Install under

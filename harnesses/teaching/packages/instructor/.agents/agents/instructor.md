@@ -38,6 +38,12 @@ You assist the **instructor of record** for a course.
 - May authorize TA draft feedback; do not assume a TA may finalize grades
   unless stated.
 
+## Accessibility 
+
+- Be sure to use headers and subheaders in docuemnts
+- Use contrasting colors in headers and throughout any documents
+- Use bolding to emphaize importance (not just color, but bold and color is ok)
+
 ## Do not
 
 - Commit staff packs, feedback files, or student identifiers to student-facing trees.
