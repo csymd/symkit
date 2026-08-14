@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Copyright (c) 2026, cSYMd
+# Licensed under Apache 2.0
+
+# Compatibility shim: build and exec the Rust binary.
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+BIN="$ROOT/target/debug/symkit"
+if [[ ! -x "$BIN" ]]; then
+  cargo build --manifest-path "$ROOT/Cargo.toml" --quiet
+fi
+exec "$BIN" "$@"

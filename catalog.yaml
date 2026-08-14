@@ -1,0 +1,122 @@
+# Copyright (c) 2026, cSYMd
+# Licensed under Apache 2.0
+
+# symkit catalog — single source of truth for cli/symkit
+version: 3
+
+kit:
+  name: symkit
+  description: Installable agent harnesses for teaching, research, and AI work
+
+adapters:
+  default: [grok]
+  all: [grok, claude, codex]
+  grok:
+    rules: .grok/rules
+    skills: .grok/skills
+    agents: .grok/agents
+  claude:
+    pointer_file: CLAUDE.md
+    rules: .claude/rules
+    skills: .claude/skills
+    agents: .claude/agents
+  codex:
+    skills: .codex/skills
+
+canonical:
+  agents_md: AGENTS.md
+  root: .agents
+  rules: .agents/rules
+  skills: .agents/skills
+  agents: .agents/agents
+  state: .symkit/state.yaml
+
+core:
+  rules: core/rules
+  templates: core/templates
+
+harnesses:
+  teaching:
+    status: active
+    description: Course materials, staff and learner agents, assignment structure
+    default_role: instructor
+    workspace: harnesses/teaching/workspace
+    packages:
+      shared:
+        description: Materials AGENTS, release checklist, course-materials rules
+        path: harnesses/teaching/packages/shared
+        student_safe: true
+      staff:
+        description: Engagement norms, evaluate-content, write-gherkin (local only)
+        path: harnesses/teaching/packages/staff
+        student_safe: false
+      instructor:
+        description: Instructor agent plus course-prep, week-plan, assignment-review
+        path: harnesses/teaching/packages/instructor
+        student_safe: false
+      ta:
+        description: TA agent only (pair with staff; no course design skills)
+        path: harnesses/teaching/packages/ta
+        student_safe: false
+      learner:
+        description: Student literacy docs plus learner agent and study skills
+        path: harnesses/teaching/packages/learner
+        student_safe: true
+    roles:
+      instructor: [shared, staff, instructor]
+      faculty: [shared, staff, instructor]
+      ta: [shared, staff, ta]
+      learner: [shared, learner]
+      materials: [shared]
+    prune:
+      ta:
+        skills: [course-prep, week-plan, assignment-review]
+        agents: [instructor]
+        rules: [course-prep, week-plan, assignment-review]
+      instructor:
+        agents: [ta]
+      faculty:
+        agents: [ta]
+      learner:
+        skills: [course-prep, week-plan, assignment-review, evaluate-content, release-materials]
+        agents: [instructor, ta, materials-author]
+        rules: [course-prep, week-plan, assignment-review, evaluate-content, student-engagement]
+
+  research:
+    status: active
+    description: Experiment layout, reproducibility, paper-oriented research repos
+    default_role: researcher
+    workspace: harnesses/research/workspace
+    packages:
+      shared:
+        description: Research AGENTS, aims-as-truth, layout conventions
+        path: harnesses/research/packages/shared
+        student_safe: true
+    roles:
+      researcher: [shared]
+      materials: [shared]
+    prune: {}
+
+  ai:
+    status: active
+    description: Model-run scaffolding, evaluation logs, provenance
+    default_role: experimenter
+    workspace: harnesses/ai/workspace
+    packages:
+      shared:
+        description: Experiment AGENTS, config-as-source, eval-run skill
+        path: harnesses/ai/packages/shared
+        student_safe: true
+    roles:
+      experimenter: [shared]
+      materials: [shared]
+    prune: {}
+
+  biosignal:
+    status: later
+    description: Biosignal and SymWorx-oriented agents (not shipped yet)
+    default_role: ""
+    workspace: ""
+    packages: {}
+    roles: {}
+    prune: {}
