@@ -28,6 +28,9 @@ cargo +nightly fmt --version
 - No Python, no rsync, no network required for install
 - End users of the installer only need **stable** `rustc` / `cargo` (see
   [docs/install.md](docs/install.md))
+- The binary embeds `catalog.yaml`, `core/`, and `harnesses/` at compile
+  time (`include_str!` / `include_dir!`). A checkout still wins over the
+  embedded cache so local edits are what `./cli/symkit` installs.
 
 ## Common commands
 

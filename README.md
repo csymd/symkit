@@ -91,6 +91,10 @@ cargo test
 
 Requires a Rust toolchain. `./cli/symkit` builds the debug binary if needed.
 
+`cargo install symkit` embeds the catalog and harness trees. Outside a
+checkout, the CLI extracts them to `$XDG_DATA_HOME/symkit/<version>/`.
+Set `SYMKIT_ROOT` to force a checkout.
+
 ## Contributing
 
 - [CONTRIBUTING.md](CONTRIBUTING.md) — how to send changes

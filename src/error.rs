@@ -11,7 +11,7 @@ pub type Result<T> = std::result::Result<T, Error>;
 pub enum Error {
     #[error("catalog not found: {0}")]
     CatalogMissing(PathBuf),
-    #[error("cannot find catalog.yaml (set SYMKIT_ROOT or run from a symkit checkout)")]
+    #[error("cannot find catalog.yaml (set SYMKIT_ROOT or run from a checkout; cargo-install uses an embedded copy)")]
     KitRootNotFound,
     #[error("unknown harness '{name}' (have: {known})")]
     UnknownHarness { name: String, known: String },
