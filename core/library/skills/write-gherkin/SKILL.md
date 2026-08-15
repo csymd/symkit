@@ -23,6 +23,7 @@ active agent:
 | `instructor` / `materials-author` | Lab/assignment success criteria (not an answer key) |
 | `ta` | Draft criteria or check that a submission meets existing scenarios |
 | `researcher` | Analysis or study pipelines (inputs → process → observables) |
+| `product-manager` | Product or API behavior (product / system mode) |
 
 You write **specifications**. Step definitions and production code are out of
 scope unless the user also asks.

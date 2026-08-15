@@ -107,8 +107,7 @@ enforced access control.
 ./tests/smoke.sh
 ```
 
-`status: later` harnesses appear in `list` / `show` and refuse `install`
-(biosignal is in this state).
+`status: later` harnesses appear in `list` / `show` and refuse `install`.
 
 Overlays vs new harnesses: an overlay is an extra package (`--pack` / `--also`)
 on an existing harness. A new harness is for a different default layout and
@@ -164,8 +163,7 @@ Rust / C-style: `//`. Python, shell, YAML, TOML: `#`. Markdown: an HTML comment.
 - learner isolation (no staff skills)
 - `--adapters none` and `--adapters all`
 - `init --scaffold` and no-clobber without `--force`
-- research and ai scaffolds
-- biosignal refused
+- research, ai, product, creative, and performance scaffolds
 - install into this repo refused
 - gitignore is additive
 

@@ -2,8 +2,8 @@
 
 Vendor-neutral **agent harnesses** you install into another repository.
 
-Edit content once under `harnesses/`. Install into a teaching, research, or
-experiment repo so Grok, Claude Code, Codex, and similar tools share the same
+Edit content once under `harnesses/`. Install into a teaching, research, experiment, product, creative, or performance repo so Grok,
+Claude Code, Codex, and similar tools share the same
 policies via thin path adapters.
 
 cSYMd lab kit. The UNCG-facing predecessor lives separately as
@@ -17,11 +17,11 @@ cSYMd lab kit. The UNCG-facing predecessor lives separately as
 ./cli/symkit show teaching
 
 # New workspace (scaffold + instructor packs + grok adapter)
-./cli/symkit init ~/worx/my-course \
+./cli/symkit init /path/to/new-course \
   --harness teaching --role instructor --scaffold
 
 # Existing repo
-./cli/symkit install ~/worx/existing-study \
+./cli/symkit install /path/to/existing-study \
   --harness research --role researcher
 ```
 
@@ -38,7 +38,9 @@ harnesses/
   teaching/           course templates, staff/learner agents
   research/           experiment tracking, reproducibility, paper layout
   ai/                 model-run and evaluation scaffolding
-  biosignal/          later — SymWorx / biosignal focus
+  product/            PRDs, roadmap, shipping notes
+  creative/           voice, naming, copy, asset briefs
+  performance/        exercise physiology + biomechanics; role: coach
 cli/symkit            shim → target/debug/symkit
 examples/             how to add a custom overlay
 ```

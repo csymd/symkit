@@ -14,7 +14,7 @@ Requires a Rust toolchain (`cargo` / `rustc`). `./cli/symkit` builds
 ## New workspace
 
 ```bash
-./cli/symkit init ~/worx/my-course \
+./cli/symkit init /path/to/new-course \
   --harness teaching --role instructor --scaffold --yes
 ```
 
@@ -24,7 +24,7 @@ merges agent packs, writes the grok adapter, and updates `.gitignore`.
 ## Existing repo
 
 ```bash
-./cli/symkit install ~/worx/existing --harness research --role researcher --yes
+./cli/symkit install /path/to/existing --harness research --role researcher --yes
 ```
 
 ## Adapters

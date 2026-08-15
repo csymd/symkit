@@ -6,7 +6,7 @@ version: 4
 
 kit:
   name: symkit
-  description: Installable agent harnesses for teaching, research, and AI work
+  description: Installable agent harnesses for teaching, research, AI, product, creative, and performance work
 
 adapters:
   default: [grok]
@@ -139,11 +139,94 @@ harnesses:
         skills: [config-check]
     prune: {}
 
-  biosignal:
-    status: later
-    description: Biosignal and SymWorx-oriented agents (not shipped yet)
-    default_role: ""
-    workspace: ""
-    packages: {}
-    roles: {}
-    prune: {}
+  product:
+    status: active
+    description: Specs, roadmap, and shipping notes for product repos
+    default_role: product-manager
+    workspace: harnesses/product/workspace
+    packages:
+      shared:
+        description: Product AGENTS and written-truth rules
+        path: harnesses/product/packages/shared
+        student_safe: true
+      product-manager:
+        description: Product-manager agent
+        path: harnesses/product/packages/product-manager
+        student_safe: true
+    roles:
+      product-manager:
+        packages: [shared, product-manager]
+        skills:
+          [write-prd, roadmap, release-notes, write-gherkin, accessibility-review]
+      pm:
+        packages: [shared, product-manager]
+        skills:
+          [write-prd, roadmap, release-notes, write-gherkin, accessibility-review]
+      materials:
+        packages: [shared]
+        skills: [write-gherkin, write-prd]
+    prune:
+      materials:
+        agents: [product-manager]
+
+  creative:
+    status: active
+    description: Voice, naming, copy, and asset briefs for brand work
+    default_role: creative-director
+    workspace: harnesses/creative/workspace
+    packages:
+      shared:
+        description: Creative AGENTS and brand-as-truth rules
+        path: harnesses/creative/packages/shared
+        student_safe: true
+      creative-director:
+        description: Creative-director agent
+        path: harnesses/creative/packages/creative-director
+        student_safe: true
+    roles:
+      creative-director:
+        packages: [shared, creative-director]
+        skills:
+          [brand-voice, critique-copy, naming, asset-brief, accessibility-review]
+      creative:
+        packages: [shared, creative-director]
+        skills:
+          [brand-voice, critique-copy, naming, asset-brief, accessibility-review]
+      materials:
+        packages: [shared]
+        skills: [brand-voice, accessibility-review]
+    prune:
+      materials:
+        agents: [creative-director]
+
+  performance:
+    status: active
+    description: Exercise physiology and biomechanics for human performance
+    default_role: coach
+    workspace: harnesses/performance/workspace
+    packages:
+      shared:
+        description: Performance AGENTS, program-as-truth, no-clinical, wrap-kernels
+        path: harnesses/performance/packages/shared
+        student_safe: true
+      coach:
+        description: Coach agent (physiology + biomechanics)
+        path: harnesses/performance/packages/coach
+        student_safe: true
+    roles:
+      coach:
+        packages: [shared, coach]
+        skills:
+          [session-plan, program-check, movement-review, physio-explain,
+           signal-quality, write-gherkin, repro-check]
+      performance-coach:
+        packages: [shared, coach]
+        skills:
+          [session-plan, program-check, movement-review, physio-explain,
+           signal-quality, write-gherkin, repro-check]
+      materials:
+        packages: [shared]
+        skills: [write-gherkin, repro-check]
+    prune:
+      materials:
+        agents: [coach]

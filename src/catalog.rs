@@ -265,26 +265,40 @@ impl Catalog {
     }
 
     pub fn format_list(&self) -> String {
-        let mut out = String::new();
         let name = if self.kit.name.is_empty() {
             "symkit"
         } else {
             &self.kit.name
         };
-        out.push_str(&format!("KIT\t{name}\n"));
+        let adapters = self.adapters.default.join(" ");
+
+        let mut meta: Vec<(&str, &str)> = vec![("KIT", name)];
         if !self.kit.description.is_empty() {
-            out.push_str(&format!("DESC\t{}\n", self.kit.description));
+            meta.push(("DESC", &self.kit.description));
         }
-        out.push_str(&format!("ADAPTERS_DEFAULT\t{}\n", self.adapters.default.join(" ")));
-        out.push_str("HARNESS\tSTATUS\tDEFAULT_ROLE\tDESCRIPTION\n");
-        for (name, h) in &self.harnesses {
+        meta.push(("ADAPTERS_DEFAULT", &adapters));
+
+        let mut rows: Vec<Vec<String>> = Vec::new();
+        for (hname, h) in &self.harnesses {
             let role = if h.default_role.is_empty() {
                 "-"
             } else {
-                &h.default_role
+                h.default_role.as_str()
             };
-            out.push_str(&format!("{name}\t{}\t{role}\t{}\n", h.status, h.description));
+            rows.push(vec![
+                hname.clone(),
+                h.status.clone(),
+                role.to_string(),
+                h.description.clone(),
+            ]);
         }
+
+        let mut out = aligned_kv(&meta);
+        out.push('\n');
+        out.push_str(&aligned_table(
+            &["HARNESS", "STATUS", "DEFAULT_ROLE", "DESCRIPTION"],
+            &rows,
+        ));
         out
     }
 
@@ -325,6 +339,48 @@ fn merge_skill_names(always: &[String], role: &[String]) -> Vec<String> {
         }
     }
     out
+}
+
+fn aligned_kv(rows: &[(&str, &str)]) -> String {
+    let width = rows.iter().map(|(k, _)| k.len()).max().unwrap_or(0);
+    let mut out = String::new();
+    for (key, value) in rows {
+        out.push_str(&format!("{key:<width$}  {value}\n"));
+    }
+    out
+}
+
+fn aligned_table(headers: &[&str], rows: &[Vec<String>]) -> String {
+    let mut widths: Vec<usize> = headers.iter().map(|h| h.len()).collect();
+    for row in rows {
+        for (i, cell) in row.iter().enumerate() {
+            if let Some(w) = widths.get_mut(i) {
+                *w = (*w).max(cell.len());
+            }
+        }
+    }
+    let mut out = pad_cells(headers.iter().copied(), &widths);
+    out.push('\n');
+    for row in rows {
+        out.push_str(&pad_cells(row.iter().map(String::as_str), &widths));
+        out.push('\n');
+    }
+    out
+}
+
+fn pad_cells<'a>(cells: impl IntoIterator<Item = &'a str>, widths: &[usize]) -> String {
+    let cells: Vec<&str> = cells.into_iter().collect();
+    cells
+        .iter()
+        .enumerate()
+        .map(|(i, cell)| {
+            if i + 1 == cells.len() {
+                (*cell).to_string()
+            } else {
+                format!("{:<width$}", cell, width = widths[i] + 2)
+            }
+        })
+        .collect()
 }
 
 fn join_keys<V>(map: &BTreeMap<String, V>) -> String {
@@ -386,10 +442,24 @@ mod tests {
 
     #[test]
     fn resolve_later_refused() {
-        let cat = load_repo();
-        let err = cat.resolve("biosignal", None, &[]).unwrap_err();
+        let cat: Catalog = serde_yaml::from_str(
+            "version: 1\nharnesses:\n  stub:\n    status: later\n    packages: {}\n    roles: {}\n",
+        )
+        .unwrap();
+        let err = cat.resolve("stub", None, &[]).unwrap_err();
         let msg = err.to_string();
         assert!(msg.contains("not installable"), "{msg}");
+    }
+
+    #[test]
+    fn resolve_performance_coach() {
+        let cat = load_repo();
+        let r = cat.resolve("performance", Some("coach"), &[]).unwrap();
+        assert_eq!(r.packages, ["shared", "coach"]);
+        assert!(r.skills.contains(&"session-plan".into()));
+        assert!(r.skills.contains(&"movement-review".into()));
+        assert!(r.skills.contains(&"physio-explain".into()));
+        assert!(!r.skills.contains(&"course-prep".into()));
     }
 
     #[test]
@@ -416,6 +486,29 @@ mod tests {
         let s = cat.format_list();
         assert!(s.lines().any(|l| l.starts_with("HARNESS")));
         assert!(s.contains("teaching"));
+        assert!(s.contains("product"));
+        assert!(s.contains("creative"));
+        assert!(s.contains("performance"));
+    }
+
+    #[test]
+    fn resolve_product_pm_alias() {
+        let cat = load_repo();
+        let r = cat.resolve("product", Some("pm"), &[]).unwrap();
+        assert_eq!(r.packages, ["shared", "product-manager"]);
+        assert!(r.skills.contains(&"write-prd".into()));
+        assert!(r.skills.contains(&"write-gherkin".into()));
+        assert!(!r.skills.contains(&"naming".into()));
+        assert!(!r.private.iter().any(|p| p == "product-manager"));
+    }
+
+    #[test]
+    fn resolve_creative_director() {
+        let cat = load_repo();
+        let r = cat.resolve("creative", Some("creative"), &[]).unwrap();
+        assert_eq!(r.packages, ["shared", "creative-director"]);
+        assert!(r.skills.contains(&"naming".into()));
+        assert!(!r.skills.iter().any(|s| s == "write-prd"));
     }
 
     #[test]

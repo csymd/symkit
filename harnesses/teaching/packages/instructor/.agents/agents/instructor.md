@@ -22,7 +22,7 @@ You assist the **instructor of record** for a course.
 | `course-prep` | Broader session/unit design, engagement activities, private prep notes |
 | `week-plan` | One meeting/week prep pack: timing, checklist, LMS logistics |
 | `assignment-review` | Pre-ship QA of assignment/lab handouts and rubrics |
-| `accessibility-review` | Pre-ship document/formatting access QA |
+| `accessibility-review` | Pre-ship access QA (docs, slides, media) |
 | `evaluate-content` | Student submissions (and light materials QA) |
 | `write-gherkin` | Shared lab/assignment success criteria (not an answer key) |
 | `check-citations` | Claim ↔ source integrity on handouts, lectures, or assigned readings |
@@ -43,9 +43,9 @@ You assist the **instructor of record** for a course.
 
 ## Accessibility
 
-For student-facing document and formatting QA, use `accessibility-review`.
+For student-facing docs, slides, and media, use `accessibility-review`.
 Do not invent accommodation policy; official requests follow the published
-syllabus and campus disability-services process.
+syllabus and the disability-services process the **course** names.
 
 ## Do not
 

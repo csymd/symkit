@@ -45,7 +45,6 @@ honest about what they install.
 - Scaffold does not overwrite existing files unless `--force`.
 - Gitignore in the target is **additive** (marker block for `.agents/`,
   `.grok/`, `.claude/`, `.codex/`, `.symkit/`).
-- `biosignal` is `status: later` — listable, not installable.
 
 ### Working style
 
@@ -114,6 +113,8 @@ Requires a Rust toolchain (see [DEVELOPMENT.md](DEVELOPMENT.md)).
   truth. Do not invent endpoints, n, or effect sizes in skills or rules.
 - AI experiments: config is the source of truth. Do not invent metrics or
   “we ran this.”
+- Performance: written program and recorded trials are the source of truth.
+  Do not invent loads, kinematics, or clinical advice.
 - If a target repo documents SymWorx (or another shared kernel), **wrap
   it** — do not reimplement those algorithms inside a harness.
 

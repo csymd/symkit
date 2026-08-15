@@ -1,11 +1,13 @@
 ---
 name: accessibility-review
 description: >
-  Instructor-only accessibility review of course documents before students
-  see them (headings, contrast, emphasis, links, images, language). Use when
-  QA-ing a handout, slide deck, rubric, lab, or syllabus excerpt for
-  readability and access. Not for grading (use evaluate-content), weekly
-  prep (use week-plan), or a full assignment rewrite (use assignment-review).
+  Accessibility QA of student- or user-facing artifacts (documents, slides,
+  multimedia) before they ship. Headings, contrast, links, images, captions,
+  transcripts, math, tables. Use for handouts, decks, labs, product docs, or
+  public copy. Not a legal ADA/504/WCAG determination. Not grading
+  (evaluate-content), week-plan, or a full assignment rewrite
+  (assignment-review). Triggers: accessibility review, captions, alt text,
+  slide reading order, WCAG pass, accessibility-review, /accessibility-review.
 ---
 
 <!--
@@ -13,22 +15,34 @@ Copyright (c) 2026, PalEm Dynamics LLC
 Licensed under the Apache License, Version 2.0.
 -->
 
-# Accessibility review (instructor only)
+# Accessibility review
 
-Structured **document accessibility QA** for materials students will read or
-submit against.
+Structured **artifact QA** for materials people will read, watch, or submit
+against. Reviews the *file*, not a person.
 
-**Instructor package only.** This reviews the *artifact*, not a student, and
-is **not** a legal ADA/Section 504 determination or a substitute for official
-disability-services accommodations.
+This is **not** a legal ADA, Section 504, or WCAG determination, and **not**
+a substitute for official disability-services accommodations.
+
+## Mode (pick one; ask once if unclear)
+
+Apply only that mode’s extra checks. **Mixed** = one dimension table, plus
+the extra lists that match each file.
+
+| Mode | Typical files | Extra checks |
+|:-----|:--------------|:-------------|
+| **Document** | Markdown, Word, Google Doc, tagged PDF, notebook | Styles, inline images, data tables, built-in checker |
+| **Presentation** | Slides | Unique titles, built-in layouts, ≥18 pt, reading order |
+| **Multimedia** | Pre-recorded video / audio | Captions, transcript, player keyboard, flashing, AD |
+| **Mixed** | A module with notes + deck + clip | All that apply, named per path |
 
 ## When to use
 
-- “Can students actually use this handout / deck / rubric?”
-- Headings are missing, skipped, or faked with bold
-- Color is the only way to see importance or status
-- Images, screenshots, or plots carry meaning with no text equivalent
-- Language is dense, undefined, or hard to scan
+- “Can someone actually use this handout / deck / clip / product page?”
+- Headings skipped or faked with bold
+- Color is the only status signal
+- Meaning lives only in an image, screenshot, or unspoken visual
+- Equations are pictures; tables are layout grids
+- Video has no captions or transcript
 
 ## When not to use
 
@@ -38,58 +52,71 @@ disability-services accommodations.
 | Score a student’s submission | `evaluate-content` |
 | Plan the next class | `week-plan` |
 | Design a new unit | `course-prep` |
-| Decide an individual accommodation | published syllabus + campus disability services |
-
-Run this **after** or **beside** `assignment-review`. Inclusion/tone there is
-not a substitute for this pass.
+| Copy voice / naming only | `critique-copy` / `brand-voice` |
+| Decide an individual accommodation | published syllabus + the office the *course* names |
 
 ## Review dimensions
 
-Score each: **Pass / Needs work / Blocker**, with evidence (path + quote or
-line).
+Score each: **Pass / Needs work / Blocker / N/A**, with evidence (path +
+quote or line). Skip rows that the mode does not use.
 
-1. **Headings & structure** — one title (`#`); real headings (`##` / `###`),
-   not bold-as-heading; no skipped levels; sections a screen reader or
-   outline can walk
-2. **Emphasis & color** — importance via wording + **bold** (or a heading),
-   never color alone; if color is used, contrast must stay readable on a
-   typical display and in grayscale
+1. **Headings & structure** — real heading styles or `#` / `##` (not
+   bold-as-heading); no skipped levels; one title. **Presentation:** every
+   slide has a **unique** title; built-in slide layouts; logical reading
+   order. Do not fake layout with empty paragraphs, tabs, or space-runs.
+2. **Emphasis, color & type** — never color alone; contrast still works in
+   grayscale. **Presentation:** body text at least **18 pt**. Prefer a
+   readable sans or the file’s documented accessible font — do not invent a
+   campus type list.
 3. **Links, lists, tables** — link text describes the target (not “click
-   here”); lists for sequences; tables have a header row and are not used
-   for page layout
-4. **Images & media** — meaningful figures have alt text or an adjacent
-   caption; no essential step lives only in a screenshot; AV has a caption
-   or transcript pointer
-5. **Language & cognitive load** — short sentences; acronyms defined once;
-   consistent terms; time box and “what to turn in” easy to find
-6. **Code, math, data** — copy-pasteable text, not only images of code;
-   commands in fenced blocks; large tables offered as a file when needed
-7. **File & format** — prefer markdown/HTML source over scanned PDF; if a
-   PDF/slide deck ships, it still has a heading outline and selectable text
+   here”). Lists for sequences. **Tables are data only:** header row (and
+   row headers when needed); no merged cells; no blank rows used for
+   spacing. Spreadsheets: a real header row.
+4. **Images & complex visuals** — equivalent alt (purpose + message);
+   decorative marked empty; no essential step only in a screenshot. **Docs:**
+   images in line with text, not floating. Infographics need a long
+   description or adjacent caption that carries the same facts.
+5. **Multimedia** — **Captions** (Level A): present, synced, throughout,
+   speaker identified, readable contrast, enough time on screen. **Transcript**
+   (Level A): speech + relevant non-speech + on-screen text not spoken;
+   speakers named; accessible format (text/Doc); if on another page, a way
+   back. **Player:** keyboard pause/seek/volume; no surprise autoplay (or
+   stoppable at start); no flashing. **Audio description** (Level AA) when
+   visuals are not spoken — or a written plan if the course treats AD as
+   an accommodation to prepare. Point at `docs/` if the target already
+   names a captioning tool.
+6. **Language & cognitive load** — short sentences; acronyms defined once;
+   time box and “what to turn in” in text.
+7. **Code, math, data** — copy-pasteable text, not images of code.
+   **Equations** as real math (LaTeX, Equation Editor, MathML) — not a
+   screenshot of a formula. Large tables also offered as a file when needed.
+8. **File & format** — prefer markdown/HTML/tagged Word over a scanned PDF.
+   If a PDF or deck ships, it has a heading/outline and selectable text.
+   **Run the file’s own accessibility checker** (Word, Google, PowerPoint,
+   Acrobat, Canvas RCE, etc.) when one exists. Report what it flagged vs
+   what this pass found. “Checker not available” is valid.
 
 ## Workflow
 
-1. Identify the artifact(s) and who reads them (all students vs a staff
-   note — staff-only files are out of scope unless they will be pasted into
-   student-facing channels).
-2. Skim the outline (heading list) before the prose.
-3. Fill the dimension table.
-4. List **Blockers** first (cannot complete the task, or meaning is
-   color/image-only).
-5. List **High-value edits** as concrete rewrites, not “make it accessible.”
-6. Optional: patch heading/alt/link snippets in the draft.
-7. End with **Ship recommendation**: Ship / Ship with nits / Do not ship.
+1. Identify artifacts, audience (student-facing / public / staff-only), and
+   **mode**. Staff-only files are out of scope unless they will be pasted
+   into a student-facing channel.
+2. If the **target repo** already names a WCAG level or campus deadline,
+   quote that path. Do not invent a university or a date.
+3. Skim the outline (headings or slide titles) first.
+4. Fill the dimension table. Apply only the extra checks for the mode.
+5. **Blockers** first (cannot complete the task; meaning is color- or
+   image-only; required captions/transcript missing).
+6. **High-value edits** as concrete rewrites, not “make it accessible.”
+7. Optional: patch heading/alt/link/caption snippets.
+8. **Ship recommendation**: Ship / Ship with nits / Do not ship.
 
-## Checks (apply what exists)
+## Honesty
 
-- [ ] Title is a heading, not a bold paragraph
-- [ ] Heading levels go `#` → `##` → `###` without jumps
-- [ ] Color is never the only signal (status, required vs optional, key)
-- [ ] Colored headings/callouts still read if color is removed
-- [ ] Links make sense out of context
-- [ ] Images that teach have alt or a caption that carries the same fact
-- [ ] No “see the red box / the figure” without a named referent
-- [ ] Rubric or submit path is in text, not only a screenshot of the LMS
+- Do **not** write “WCAG 2.1 AA”, “Title II ready”, or “ADA compliant.”
+- Do **not** approve or deny an accommodation letter.
+- If you cannot open the media (no captions file, no audio), mark those
+  rows **unknown** and say what is missing — do not invent a pass.
 
 ## Output template
 
@@ -97,17 +124,21 @@ line).
 # Accessibility review — <title or path>
 
 ## Context
+- Mode: document | presentation | multimedia | mixed
 - Paths:
-- Audience (student-facing?):
-- Formats (md / slides / pdf / notebook):
+- Audience (student-facing / public?):
+- Formats:
+- Checker: ran <tool> | not available | n/a
+- Target-stated bar (quote path, or “none”):
 
 ## Dimension scores
 | Dimension | Rating | Notes |
 |:----------|:-------|:------|
 | Headings & structure | | |
-| Emphasis & color | | |
+| Emphasis, color & type | | |
 | Links, lists, tables | | |
-| Images & media | | |
+| Images & complex visuals | | |
+| Multimedia | | |
 | Language & cognitive load | | |
 | Code, math, data | | |
 | File & format | | |
@@ -121,14 +152,16 @@ line).
 ## Ship recommendation
 - Ship | Ship with nits | Do not ship
 
-## Open questions for instructor
+## Open questions
 - …
 ```
 
 ## Out of scope
 
 - Approving or denying an individual accommodation request
-- Claiming WCAG conformance or “ADA compliant”
+- Claiming WCAG, ADA, or Title II conformance
 - Grading people
-- Auto-publishing to an LMS
-- Rewriting the whole assignment (hand that to `assignment-review` / `course-prep`)
+- Auto-publishing to an LMS or running a named campus scanner
+- Rewriting the whole assignment (`assignment-review` / `course-prep`)
+- Campus-specific offices, scanners, or deadlines — those live in the
+  **target course docs** or a teaching overlay, not this skill

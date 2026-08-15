@@ -16,7 +16,7 @@ pass() { echo "ok  $*"; }
 "$CLI" list | grep -q '^HARNESS' || fail "list header"
 "$CLI" list | grep -q teaching || fail "list teaching"
 "$CLI" show teaching | grep -q '^instructor	' || fail "show teaching roles"
-"$CLI" show biosignal | grep -q 'STATUS=later' || fail "biosignal later"
+"$CLI" show performance | grep -q '^STATUS=active' || fail "performance active"
 
 # materials then instructor
 T1="$WORKDIR/course"
@@ -83,12 +83,41 @@ T5="$WORKDIR/eval"
 [[ -f "$T5/config.yaml" ]] || fail "ai config scaffold"
 [[ -f "$T5/.agents/skills/eval-run/SKILL.md" ]] || fail "eval-run"
 
-# refuse later harness
-mkdir -p "$WORKDIR/nope"
-if "$CLI" install "$WORKDIR/nope" --harness biosignal --yes 2>"$WORKDIR/err"; then
-  fail "biosignal should refuse install"
-fi
-grep -q 'not installable' "$WORKDIR/err" || fail "biosignal error message"
+# product harness
+T7="$WORKDIR/product"
+"$CLI" init "$T7" --harness product --role product-manager --scaffold --yes
+[[ -f "$T7/docs/roadmap.md" ]] || fail "product scaffold roadmap"
+[[ -f "$T7/.agents/agents/product-manager.md" ]] || fail "product-manager agent"
+[[ -f "$T7/.agents/skills/write-prd/SKILL.md" ]] || fail "write-prd on pm"
+[[ -f "$T7/.agents/skills/write-gherkin/SKILL.md" ]] || fail "write-gherkin on pm"
+[[ -d "$T7/.agents/skills/course-prep" ]] && fail "course-prep must not install on product"
+[[ -f "$T7/.agents/agents/creative-director.md" ]] && fail "creative agent must not install on product"
+[[ -d "$T7/.agents/skills/naming" ]] && fail "naming must not install on product"
+T8="$WORKDIR/product-materials"
+mkdir -p "$T8"
+"$CLI" install "$T8" --harness product --role materials --yes
+[[ -f "$T8/.agents/agents/product-manager.md" ]] && fail "materials must not install pm agent"
+[[ -f "$T8/.agents/skills/write-prd/SKILL.md" ]] || fail "write-prd on materials"
+
+# creative harness
+TC="$WORKDIR/creative"
+"$CLI" init "$TC" --harness creative --role creative-director --scaffold --yes
+[[ -f "$TC/docs/brand/README.md" ]] || fail "creative scaffold brand"
+[[ -f "$TC/.agents/agents/creative-director.md" ]] || fail "creative-director agent"
+[[ -f "$TC/.agents/skills/naming/SKILL.md" ]] || fail "naming on creative"
+[[ -f "$TC/.agents/rules/brand.md" ]] || fail "brand rule"
+[[ -d "$TC/.agents/skills/write-prd" ]] && fail "write-prd must not install on creative"
+[[ -f "$TC/.agents/agents/product-manager.md" ]] && fail "pm agent must not install on creative"
+
+# performance harness
+T9="$WORKDIR/perf"
+"$CLI" init "$T9" --harness performance --role coach --scaffold --yes
+[[ -f "$T9/docs/program/README.md" ]] || fail "performance scaffold program"
+[[ -f "$T9/.agents/agents/coach.md" ]] || fail "coach agent"
+[[ -f "$T9/.agents/skills/session-plan/SKILL.md" ]] || fail "session-plan"
+[[ -f "$T9/.agents/skills/movement-review/SKILL.md" ]] || fail "movement-review"
+[[ -f "$T9/.agents/rules/no-clinical.md" ]] || fail "no-clinical rule"
+[[ -d "$T9/.agents/skills/course-prep" ]] && fail "course-prep must not install on performance"
 
 # refuse kit root
 if "$CLI" install "$ROOT" --harness teaching --role materials --yes 2>"$WORKDIR/err2"; then
