@@ -1,39 +1,18 @@
-# rustfmt.toml — SymKit
-# Manual: cargo fmt
-# Check:  cargo fmt -- --check
-#
-# Pragmatic configuration.
-#
-# IMPORTANT for import formatting:
-#   - Long use lists are formatted vertically (one item per line) for better
-#     diffs and readability. See `imports_layout = "Vertical"` below.
-#   - On stable rustfmt, some settings (including imports_layout when other
-#     unstable keys are present) may be ignored and it will use a compact
-#     "Mixed" style (multiple items per line).
-#   - To get the canonical formatting (vertical imports + better grouping):
-#       cargo +nightly fmt
-#   - For CI strict check: cargo +nightly fmt -- --check
-#
-# Some high-value options (group_imports, imports_granularity, etc.)
-# are still unstable on stable toolchains. They fall back gracefully.
+# Manual: cargo +nightly fmt
+# Check:  cargo +nightly fmt -- --check
 
 edition = "2024"
 max_width = 120
 
 use_small_heuristics = "Default"
 
-# These are the ones that will do the most to kill future import churn
-# (the largest source of current `cargo fmt` diffs across biosym, loadsym,
-# bindings, etc.). On stable they may be treated as "Preserve".
+# Group std vs external vs crate; one `use` per crate.
+# On stable these may be treated as "Preserve".
 group_imports = "StdExternalCrate"
 imports_granularity = "Crate"
 
-# Prefer vertical layout (one item per line) inside use blocks.
-# This gives much better diffs for long import lists (the common case in
-# the Python bindings and re-exports). On stable rustfmt this may be
-# treated as a hint or ignored if other unstable import options are also
-# present in the config file; the reliable way on stable is to write the
-# list vertically once — cargo fmt will then preserve it.
+# One item per line inside `use` blocks (better diffs).
+# Does not apply to other arrays (e.g. string slices).
 imports_layout = "Vertical"
 
 reorder_imports = true
