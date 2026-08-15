@@ -4,10 +4,11 @@
 [package]
 name = "symkit"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
+rust-version = "1.85"
 authors = ["PalEm Dynamics LLC"]
 license = "Apache-2.0"
-description = "Installable agent harnesses for teaching, research, and AI work"
+description = "Installable agent harnesses for teaching, research, AI, product, and engineering work"
 repository = "https://github.com/csymd/symkit"
 readme = "README.md"
 
@@ -21,6 +22,7 @@ serde = { version = "1.0", features = ["derive"] }
 serde_yaml = "0.9"
 thiserror = "2.0"
 walkdir = "2.5"
+include_dir = "0.7"
 
 [dev-dependencies]
 tempfile = "3.14"

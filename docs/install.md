@@ -1,6 +1,6 @@
 # Install
 
-Clone this repo and run the CLI from the clone. No package registry.
+From a clone (uses the files in that checkout):
 
 ```bash
 git clone https://github.com/csymd/symkit.git
@@ -10,6 +10,12 @@ cd symkit
 
 Requires a Rust toolchain (`cargo` / `rustc`). `./cli/symkit` builds
 `target/debug/symkit` if it is missing.
+
+From crates.io the binary embeds `catalog.yaml`, `core/`, and `harnesses/`.
+The first run that is not inside a checkout writes them under
+`$XDG_DATA_HOME/symkit/<version>/` (or `~/.local/share/symkit/<version>/`).
+Override the checkout with `SYMKIT_ROOT`; override the cache parent with
+`SYMKIT_DATA`.
 
 ## New workspace
 
