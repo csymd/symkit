@@ -214,9 +214,10 @@ There is no package registry publish. Distribution is: clone
 When a slice is ready:
 
 1. Merge to `develop` with CI green.
-2. Promote to `main`.
-3. Optionally tag an annotated milestone (`v0.1.0`). The release workflow
-   creates the GitHub Release.
+2. On `release/vX.Y.Z` (or develop): `./scripts/bump-version.sh patch --changelog`
+3. Promote to `main`.
+4. Tag `vX.Y.Z`. The release workflow creates the GitHub Release.
+5. `cargo publish` (not automated).
 
 Do not invent SemVer automation that is not in the repo.
 
