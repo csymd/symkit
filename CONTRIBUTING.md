@@ -15,10 +15,6 @@ truth), **privilege separation** (role packs on disk, not runtime ACL), and
 We encourage contributions that keep the installer small, the catalog honest,
 and harness content customizable elsewhere.
 
-The UNCG-facing predecessor lives separately as
-[`not-uncg-msia/ai-kit`](https://github.com/not-uncg-msia/ai-kit). Do not
-re-introduce course- or institution-specific identity as the default.
-
 ## AI-assisted contributions
 
 Feel free to use AI tools (such as Grok, Claude, Copilot, etc.) to assist

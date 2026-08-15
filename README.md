@@ -14,7 +14,7 @@ Provided via the cSYMd lab.
 # From a clone of this repo
 ./cli/symkit list
 ./cli/symkit show teaching
-
+ 
 # New workspace (scaffold + instructor packs + grok adapter)
 ./cli/symkit init /path/to/new-course \
   --harness teaching --role instructor --scaffold

@@ -23,10 +23,6 @@ symkit is a **content + installer** kit, not an application server.
 - **Adapters:** optional mirrors of `.agents/` into `.grok/`, `.claude/`,
   `.codex/` (default: grok)
 
-cSYMd lab kit. Methods first. The UNCG-facing predecessor
-(`not-uncg-msia/ai-kit`) stays a separate repo—do not fold institutional
-course IDs back into the default catalog.
-
 ## Development focus
 
 Keep the installer catalog-driven and the teaching/research/ai harnesses
