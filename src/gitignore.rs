@@ -13,17 +13,7 @@ use std::{
 use crate::error::Result;
 
 const PATTERNS: &[&str] = &[
-    ".agents/",
-    ".grok/",
-    ".claude/",
-    ".codex/",
-    ".symkit/",
-    "*~",
-    ".*.swp",
-    ".*.swo",
-    "*.un~",
-    "\\#*\\#",
-    ".#*",
+    ".agents/", ".grok/", ".claude/", ".codex/", ".symkit/", "*~", ".*.swp", ".*.swo", "*.un~", "\\#*\\#", ".#*",
 ];
 const MARKER_BEGIN: &str = "# BEGIN symkit agent trees (do not commit)";
 const MARKER_END: &str = "# END symkit agent trees";
@@ -46,7 +36,10 @@ pub fn ensure_agent_gitignore(target: &Path) -> Result<String> {
     let mut f = OpenOptions::new().append(true).open(&gi)?;
     writeln!(f)?;
     writeln!(f, "{MARKER_BEGIN}")?;
-    writeln!(f, "# Installed by symkit — local agent config and editor swap/backup files")?;
+    writeln!(
+        f,
+        "# Installed by symkit — local agent config and editor swap/backup files"
+    )?;
     for p in &missing {
         writeln!(f, "{p}")?;
     }
