@@ -62,6 +62,7 @@ honest about what they install.
 ## Development commands
 
 ```bash
+cargo +nightly fmt
 cargo test
 cargo clippy -- -D warnings
 ./cli/symkit list
@@ -69,7 +70,8 @@ cargo clippy -- -D warnings
 ./tests/smoke.sh
 ```
 
-Requires a Rust toolchain (see [DEVELOPMENT.md](DEVELOPMENT.md)).
+Requires rustup with **stable** (build/clippy/test) and **nightly**
+(`rustfmt`). See [DEVELOPMENT.md](DEVELOPMENT.md).
 
 ## When to ask vs. when to just do it
 

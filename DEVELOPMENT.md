@@ -9,14 +9,25 @@ of submitted code. Human how-to for *using* the installer is in
 
 ## Prerequisites
 
-- Rust stable + Cargo (`rustc`, `cargo`)
-- Optional: `./cli/symkit` builds `target/debug/symkit` if it is missing
-- No Python, no rsync, no network required for install
+Use **[rustup](https://rustup.rs/)** so `stable` (build, clippy, tests) and
+`nightly` (canonical `rustfmt`) stay in sync with CI.
 
 ```bash
-rustc --version
-cargo --version
+# Install rustup if needed, then:
+rustup toolchain install stable
+rustup toolchain install nightly
+rustup component add rustfmt clippy --toolchain stable
+rustup component add rustfmt --toolchain nightly
+rustup default stable
+
+rustc --version          # should be rustup's stable
+cargo +nightly fmt --version
 ```
+
+- `./cli/symkit` builds `target/debug/symkit` if it is missing
+- No Python, no rsync, no network required for install
+- End users of the installer only need **stable** `rustc` / `cargo` (see
+  [docs/install.md](docs/install.md))
 
 ## Common commands
 
@@ -26,7 +37,7 @@ From the repository root:
 # Build
 cargo build
 cargo test
-cargo fmt
+cargo +nightly fmt
 cargo clippy -- -D warnings
 
 # Discover (shim builds the debug binary if needed)
@@ -117,7 +128,7 @@ role matrix. Copy `examples/teaching-overlay/` for the overlay pattern.
 
 - Keep the CLI thin. Content lives in harness packages, not in `src/`.
 - Prefer catalog fields over new flags when the data is already structured.
-- Run `cargo fmt` and `cargo clippy -- -D warnings` before opening a PR.
+- Run `cargo +nightly fmt` and `cargo clippy -- -D warnings` before opening a PR.
 - Keep `AGENTS.md` in packages short; long procedures belong in `SKILL.md`.
 - Do not commit secrets, credentials, or restricted data.
 
@@ -182,6 +193,16 @@ Suggested names: `feat/…`, `fix/…`, `docs/…`, `harness/…`.
 Do not force-push `main` or `develop`. This repo is a single Cargo package
 (not a workspace) and does not use SymWorx’s `stage` / crates.io release path.
 
+## CI
+
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on **push and
+PRs to `develop` and `main`**: nightly `rustfmt --check`, clippy
+`-D warnings`, `cargo test`, `./tests/smoke.sh`.
+
+[`.github/workflows/release.yml`](.github/workflows/release.yml) runs on
+**`v*` tags** only (re-runs that gate, then opens a GitHub Release). It
+does not publish to crates.io or PyPI.
+
 ## Releasing
 
 There is no package registry publish. Distribution is: clone
@@ -189,9 +210,10 @@ There is no package registry publish. Distribution is: clone
 
 When a slice is ready:
 
-1. Merge to `develop` with smoke green.
+1. Merge to `develop` with CI green.
 2. Promote to `main`.
-3. Optionally tag an annotated milestone (`v0.1.0` or `milestone/…`).
+3. Optionally tag an annotated milestone (`v0.1.0`). The release workflow
+   creates the GitHub Release.
 
 Do not invent SemVer automation that is not in the repo.
 

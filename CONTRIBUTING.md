@@ -58,7 +58,9 @@ need to wait for an issue to be assigned.
 3. Create a focused branch from **`develop`**
    (`git checkout -b feat/your-feature-name`).
 4. Make your changes, ensuring they follow the catalog/harness conventions,
-   pass `cargo test`, `cargo clippy -- -D warnings`, and `./tests/smoke.sh`.
+   pass `cargo +nightly fmt -- --check`, `cargo test`,
+   `cargo clippy -- -D warnings`, and `./tests/smoke.sh`.
+   Install nightly rustfmt via rustup (see [DEVELOPMENT.md](DEVELOPMENT.md)).
 5. Commit with clear, descriptive messages.
 6. Push your branch and open a Pull Request against **`develop`**.
 
