@@ -199,12 +199,11 @@ Do not force-push `main` or `develop`. This repo is a single Cargo package
 ## CI
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on **push and
-PRs to `develop` and `main`**: nightly `rustfmt --check`, clippy
-`-D warnings`, `cargo test`, `./tests/smoke.sh`.
-
-[`.github/workflows/release.yml`](.github/workflows/release.yml) runs on
-**`v*` tags** only (re-runs that gate, then opens a GitHub Release). It
-does not publish to crates.io or PyPI.
+PRs to `develop` only** (the quality gate). `stage` / `main` / `release/**`
+are locked by rulesets but do not re-run CI on every promotion.
+[`.github/workflows/release.yml`](.github/workflows/release.yml) re-runs
+that gate on **`v*` tags**, then opens a GitHub Release. It does not
+publish to crates.io.
 
 ## Releasing
 
@@ -214,9 +213,10 @@ There is no package registry publish. Distribution is: clone
 When a slice is ready:
 
 1. Merge to `develop` with CI green.
-2. Promote to `main`.
-3. Optionally tag an annotated milestone (`v0.1.0`). The release workflow
-   creates the GitHub Release.
+2. On `release/vX.Y.Z` (or develop): `./scripts/bump-version.sh patch --changelog`
+3. Promote to `main`.
+4. Tag `vX.Y.Z`. The release workflow creates the GitHub Release.
+5. `cargo publish` (not automated).
 
 Do not invent SemVer automation that is not in the repo.
 
