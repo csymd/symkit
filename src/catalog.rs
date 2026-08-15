@@ -489,6 +489,7 @@ mod tests {
         assert!(s.contains("product"));
         assert!(s.contains("creative"));
         assert!(s.contains("performance"));
+        assert!(s.contains("engineering"));
     }
 
     #[test]
@@ -509,6 +510,16 @@ mod tests {
         assert_eq!(r.packages, ["shared", "creative-director"]);
         assert!(r.skills.contains(&"naming".into()));
         assert!(!r.skills.iter().any(|s| s == "write-prd"));
+    }
+
+    #[test]
+    fn resolve_engineer() {
+        let cat = load_repo();
+        let r = cat.resolve("engineering", Some("swe"), &[]).unwrap();
+        assert_eq!(r.packages, ["shared", "engineer"]);
+        assert!(r.skills.contains(&"write-tests".into()));
+        assert!(r.skills.contains(&"write-gherkin".into()));
+        assert!(!r.skills.contains(&"write-prd".into()));
     }
 
     #[test]

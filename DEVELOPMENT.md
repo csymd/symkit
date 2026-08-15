@@ -163,7 +163,7 @@ Rust / C-style: `//`. Python, shell, YAML, TOML: `#`. Markdown: an HTML comment.
 - learner isolation (no staff skills)
 - `--adapters none` and `--adapters all`
 - `init --scaffold` and no-clobber without `--force`
-- research, ai, product, creative, and performance scaffolds
+- research, ai, product, creative, performance, and engineering scaffolds
 - install into this repo refused
 - gitignore is additive
 

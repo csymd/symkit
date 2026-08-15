@@ -119,6 +119,15 @@ T9="$WORKDIR/perf"
 [[ -f "$T9/.agents/rules/no-clinical.md" ]] || fail "no-clinical rule"
 [[ -d "$T9/.agents/skills/course-prep" ]] && fail "course-prep must not install on performance"
 
+# engineering harness
+TE="$WORKDIR/eng"
+"$CLI" init "$TE" --harness engineering --role engineer --scaffold --yes
+[[ -f "$TE/src/README.md" ]] || fail "engineering scaffold src"
+[[ -f "$TE/.agents/agents/engineer.md" ]] || fail "engineer agent"
+[[ -f "$TE/.agents/skills/write-tests/SKILL.md" ]] || fail "write-tests"
+[[ -f "$TE/.agents/rules/match-repo.md" ]] || fail "match-repo rule"
+[[ -d "$TE/.agents/skills/write-prd" ]] && fail "write-prd must not install on engineering"
+
 # refuse kit root
 if "$CLI" install "$ROOT" --harness teaching --role materials --yes 2>"$WORKDIR/err2"; then
   fail "should refuse kit root"

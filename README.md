@@ -1,13 +1,12 @@
 # symkit
 
-Vendor-neutral **agent harnesses** you install into another repository.
+**agentic harnesses** designed for educational purposes but available for all...
 
-Edit content once under `harnesses/`. Install into a teaching, research, experiment, product, creative, or performance repo so Grok,
+Edit content once under `harnesses/`. Install into a teaching, research, experiment, product, creative, performance, or engineering repo so Grok,
 Claude Code, Codex, and similar tools share the same
 policies via thin path adapters.
 
-cSYMd lab kit. The UNCG-facing predecessor lives separately as
-[`not-uncg-msia/ai-kit`](https://github.com/not-uncg-msia/ai-kit).
+Provided via the cSYMd lab. 
 
 ## Quick start
 
@@ -35,12 +34,13 @@ src/                  Rust installer (catalog, merge, adapters)
 core/rules/           always-on rules copied into every target
 core/library/skills/  skill bodies; catalog.yaml assigns them to roles
 harnesses/
-  teaching/           course templates, staff/learner agents
-  research/           experiment tracking, reproducibility, paper layout
   ai/                 model-run and evaluation scaffolding
-  product/            PRDs, roadmap, shipping notes
   creative/           voice, naming, copy, asset briefs
+  engineering/        software implementation and tests; role: engineer
   performance/        exercise physiology + biomechanics; role: coach
+  product/            PRDs, roadmap, shipping notes
+  research/           experiment tracking, reproducibility, paper layout
+  teaching/           course templates, staff/learner agents
 cli/symkit            shim → target/debug/symkit
 examples/             how to add a custom overlay
 ```

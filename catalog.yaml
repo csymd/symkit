@@ -6,7 +6,7 @@ version: 4
 
 kit:
   name: symkit
-  description: Installable agent harnesses for teaching, research, AI, product, creative, and performance work
+  description: Installable agent harnesses for teaching, research, AI, product, creative, performance, and engineering work
 
 adapters:
   default: [grok]
@@ -230,3 +230,31 @@ harnesses:
     prune:
       materials:
         agents: [coach]
+
+  engineering:
+    status: active
+    description: Software engineering for application and library repos
+    default_role: engineer
+    workspace: harnesses/engineering/workspace
+    packages:
+      shared:
+        description: Engineering AGENTS, match-repo rules
+        path: harnesses/engineering/packages/shared
+        student_safe: true
+      engineer:
+        description: Engineer / SWE agent
+        path: harnesses/engineering/packages/engineer
+        student_safe: true
+    roles:
+      engineer:
+        packages: [shared, engineer]
+        skills: [write-tests, write-gherkin, repro-check]
+      swe:
+        packages: [shared, engineer]
+        skills: [write-tests, write-gherkin, repro-check]
+      materials:
+        packages: [shared]
+        skills: [write-gherkin, repro-check]
+    prune:
+      materials:
+        agents: [engineer]

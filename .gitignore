@@ -1,6 +1,8 @@
 # Copyright (c) 2026, cSYMd
 # Licensed under Apache 2.0
 
+.env
+
 # Local / generated
 /target/
 .venv/

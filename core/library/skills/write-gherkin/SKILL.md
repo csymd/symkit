@@ -24,6 +24,7 @@ active agent:
 | `ta` | Draft criteria or check that a submission meets existing scenarios |
 | `researcher` | Analysis or study pipelines (inputs → process → observables) |
 | `product-manager` | Product or API behavior (product / system mode) |
+| `engineer` | Same product/system mode; pair with `write-tests` |
 
 You write **specifications**. Step definitions and production code are out of
 scope unless the user also asks.

@@ -115,6 +115,8 @@ Requires a Rust toolchain (see [DEVELOPMENT.md](DEVELOPMENT.md)).
   “we ran this.”
 - Performance: written program and recorded trials are the source of truth.
   Do not invent loads, kinematics, or clinical advice.
+- Engineering: existing code, tests, and lockfiles are the source of truth.
+  Do not invent a second stack or claim tests passed if they did not run.
 - If a target repo documents SymWorx (or another shared kernel), **wrap
   it** — do not reimplement those algorithms inside a harness.
 
