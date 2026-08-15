@@ -1,0 +1,21 @@
+# Copyright (c) 2026, cSYMd
+# Licensed under Apache 2.0
+
+.env
+
+# Local / generated
+/target/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.symkit-test-*/
+
+# Extra local examples (ship only teaching-overlay)
+examples/*/
+!examples/teaching-overlay/
+
+# Editor
+.idea/
+.vscode/
+*~

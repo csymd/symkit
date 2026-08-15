@@ -1,0 +1,10 @@
+# Copyright (c) 2026, cSYMd
+# Licensed under Apache 2.0
+
+.venv/
+__pycache__/
+*.pyc
+data/private/
+.env
+results/**/*.png
+!results/**/README.md

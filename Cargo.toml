@@ -1,0 +1,26 @@
+# Copyright (c) 2026, PalEm Dynamics LLC
+# Licensed under the Apache License, Version 2.0.
+
+[package]
+name = "symkit"
+version = "0.1.0"
+edition = "2021"
+authors = ["PalEm Dynamics LLC"]
+license = "Apache-2.0"
+description = "Installable agent harnesses for teaching, research, and AI work"
+repository = "https://github.com/csymd/symkit"
+readme = "README.md"
+
+[[bin]]
+name = "symkit"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.5", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.9"
+thiserror = "2.0"
+walkdir = "2.5"
+
+[dev-dependencies]
+tempfile = "3.14"

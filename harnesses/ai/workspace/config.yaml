@@ -1,0 +1,11 @@
+# Experiment configuration — source of truth for what can run.
+# Add models and phases here before changing scripts.
+
+run_phase: pilot
+multi_chain: false
+n_chains: 1
+
+models: []
+# - id: example-model
+#   phases: [pilot]
+#   seed: 0

@@ -1,0 +1,49 @@
+# rustfmt.toml — SymKit
+# Manual: cargo fmt
+# Check:  cargo fmt -- --check
+#
+# Pragmatic configuration.
+#
+# IMPORTANT for import formatting:
+#   - Long use lists are formatted vertically (one item per line) for better
+#     diffs and readability. See `imports_layout = "Vertical"` below.
+#   - On stable rustfmt, some settings (including imports_layout when other
+#     unstable keys are present) may be ignored and it will use a compact
+#     "Mixed" style (multiple items per line).
+#   - To get the canonical formatting (vertical imports + better grouping):
+#       cargo +nightly fmt
+#   - For CI strict check: cargo +nightly fmt -- --check
+#
+# Some high-value options (group_imports, imports_granularity, etc.)
+# are still unstable on stable toolchains. They fall back gracefully.
+
+edition = "2024"
+max_width = 120
+
+use_small_heuristics = "Default"
+
+# These are the ones that will do the most to kill future import churn
+# (the largest source of current `cargo fmt` diffs across biosym, loadsym,
+# bindings, etc.). On stable they may be treated as "Preserve".
+group_imports = "StdExternalCrate"
+imports_granularity = "Crate"
+
+# Prefer vertical layout (one item per line) inside use blocks.
+# This gives much better diffs for long import lists (the common case in
+# the Python bindings and re-exports). On stable rustfmt this may be
+# treated as a hint or ignored if other unstable import options are also
+# present in the config file; the reliable way on stable is to write the
+# list vertically once — cargo fmt will then preserve it.
+imports_layout = "Vertical"
+
+reorder_imports = true
+reorder_modules = true
+
+# Be conservative with things that often contain intentional formatting
+format_strings = false
+format_code_in_doc_comments = false
+wrap_comments = false
+
+# Minor polish checks
+normalize_comments = true
+trailing_comma = "Vertical"
