@@ -9,6 +9,10 @@ __pycache__/
 .pytest_cache/
 .symkit-test-*/
 
+# Extra local examples (ship only teaching-overlay)
+examples/*/
+!examples/teaching-overlay/
+
 # Editor
 .idea/
 .vscode/
