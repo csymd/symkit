@@ -8,3 +8,10 @@ data/private/
 .env
 results/**/*.png
 !results/**/README.md
+
+*~
+.*.swp
+.*.swo
+*.un~
+\#*\#
+.#*

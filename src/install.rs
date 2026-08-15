@@ -265,12 +265,7 @@ fn install_library_skills(req: &InstallRequest) -> Result<()> {
     Ok(())
 }
 
-fn derived_skill_prune(
-    kit: &Path,
-    library_rel: &str,
-    keep: &[String],
-    extra: Vec<String>,
-) -> Result<Vec<String>> {
+fn derived_skill_prune(kit: &Path, library_rel: &str, keep: &[String], extra: Vec<String>) -> Result<Vec<String>> {
     let mut names = extra;
     if library_rel.is_empty() {
         names.sort();

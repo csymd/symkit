@@ -19,3 +19,8 @@ examples/*/
 .idea/
 .vscode/
 *~
+.*.swp
+.*.swo
+*.un~
+\#*\#
+.#*
