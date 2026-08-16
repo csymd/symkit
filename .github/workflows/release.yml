@@ -1,10 +1,26 @@
-# Milestone tag → GitHub Release.
-# This workflow only runs on v* tags (cut from main)
+# Release validation + GitHub Release (same trigger matrix as SymWorx / symsight).
+#
+# Branch model:
+#   develop → stage → release/vX.Y.Z → main → manual tag vX.Y.Z
+#
+# Validation (fmt, clippy, test, smoke) runs on:
+#   - PRs into main
+#   - pushes to release/**
+#   - tags v*
+#   - workflow_dispatch (checks only; does not publish)
+#
+# Push to main is not a trigger: the PR into main already ran this workflow.
+#
+# Publish (GitHub Release only; no crates.io) runs only on tags v*.
 
 name: Release
 
 on:
+  pull_request:
+    branches: [main]
   push:
+    branches:
+      - "release/**"
     tags:
       - "v*"
   workflow_dispatch:

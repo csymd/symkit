@@ -198,12 +198,13 @@ Do not force-push `main` or `develop`. This repo is a single Cargo package
 
 ## CI
 
-[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on **push and
-PRs to `develop` only** (the quality gate). `stage` / `main` / `release/**`
-are locked by rulesets but do not re-run CI on every promotion.
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on push and
+PRs to `develop` only (the quality gate). `stage` and `main` skip day-to-day
+CI (promotions of a SHA that already passed).
 [`.github/workflows/release.yml`](.github/workflows/release.yml) re-runs
-that gate on **`v*` tags**, then opens a GitHub Release. It does not
-publish to crates.io.
+that gate on PRs into `main`, pushes to `release/**`, and `v*` tags, then
+opens a GitHub Release on the tag. It does not publish to crates.io.
+Push to `main` is not a Release trigger (the PR already ran it).
 
 ## Releasing
 
