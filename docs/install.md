@@ -1,26 +1,33 @@
 # Install
 
+Requires a Rust toolchain (`cargo` / `rustc`).
+
+```bash
+cargo install symkit
+symkit --help          # includes the primary flow
+symkit guide           # cargo vs clone, adapters, what to commit
+```
+
+The crates.io binary embeds `catalog.yaml`, `core/`, and `harnesses/`.
+The first run that is **not** inside a checkout writes them under
+`$XDG_DATA_HOME/symkit/<version>/` (or `~/.local/share/symkit/<version>/`).
+
 From a clone (uses the files in that checkout):
 
 ```bash
 git clone https://github.com/csymd/symkit.git
 cd symkit
-./cli/symkit --help
+./cli/symkit --help    # builds target/debug/symkit if needed
 ```
 
-Requires a Rust toolchain (`cargo` / `rustc`). `./cli/symkit` builds
-`target/debug/symkit` if it is missing.
-
-From crates.io the binary embeds `catalog.yaml`, `core/`, and `harnesses/`.
-The first run that is not inside a checkout writes them under
-`$XDG_DATA_HOME/symkit/<version>/` (or `~/.local/share/symkit/<version>/`).
-Override the checkout with `SYMKIT_ROOT`; override the cache parent with
-`SYMKIT_DATA`.
+Running `symkit` from inside a checkout uses that tree, not the crates.io
+embed. Override the checkout with `SYMKIT_ROOT`; override the cache parent
+with `SYMKIT_DATA`.
 
 ## New workspace
 
 ```bash
-./cli/symkit init /path/to/new-course \
+symkit init /path/to/new-course \
   --harness teaching --role instructor --scaffold --yes
 ```
 
@@ -30,16 +37,19 @@ merges agent packs, writes the grok adapter, and updates `.gitignore`.
 ## Existing repo
 
 ```bash
-./cli/symkit install /path/to/existing --harness research --role researcher --yes
+symkit install /path/to/existing --harness research --role researcher --yes
 ```
+
+Do not pass `--scaffold` onto a live tree unless you want folder stubs
+(existing files are left alone unless `--force`).
 
 ## Adapters
 
 Canonical content is always `AGENTS.md` + `.agents/`. Adapters are mirrors:
 
 ```bash
-./cli/symkit install DIR --harness teaching --role instructor --adapters all
-./cli/symkit adapt DIR --adapters none   # does not delete existing vendor trees
+symkit install DIR --harness teaching --role instructor --adapters all
+symkit adapt DIR --adapters none   # does not delete existing vendor trees
 ```
 
 Default: `grok` only.

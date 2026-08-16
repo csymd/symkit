@@ -46,4 +46,5 @@ project already has one.
 ## Related rules / skills
 
 - `match-repo.md`
-- Skills come from the installed role (`catalog.yaml`).
+- Skills come from the installed role (`catalog.yaml`): `write-tests`,
+  `write-docs`, `write-gherkin`, `repro-check`.

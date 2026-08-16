@@ -20,5 +20,9 @@ Install:
 
 Do not commit `staff`, `instructor`, or `ta` packs into student-visible trees.
 Learner docs under `docs/` are safe to commit; `.agents/` usually is not.
+See the installed `course-materials.md` rule for the commit list.
 
-Custom course overlays: see `examples/teaching-overlay/`.
+Course-specific extras: copy `examples/teaching-overlay/` into
+`harnesses/teaching/packages/<id>/`, register it in `catalog.yaml`, then
+`--also <id>`. Keep overlays short. Overlay packs are not first-class local
+paths yet — they must live in the catalog.

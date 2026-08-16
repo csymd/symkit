@@ -11,16 +11,21 @@ Provided via the cSYMd lab.
 ## Quick start
 
 ```bash
+# crates.io (embeds catalog + harnesses)
+cargo install symkit
+symkit --help
+symkit guide
+
 # From a clone of this repo
 ./cli/symkit list
 ./cli/symkit show teaching
  
 # New workspace (scaffold + instructor packs + grok adapter)
-./cli/symkit init /path/to/new-course \
+symkit init /path/to/new-course \
   --harness teaching --role instructor --scaffold
 
 # Existing repo
-./cli/symkit install /path/to/existing-study \
+symkit install /path/to/existing-study \
   --harness research --role researcher
 ```
 
@@ -56,6 +61,7 @@ examples/             how to add a custom overlay
 | `symkit init [dir]` | Create or activate a workspace |
 | `symkit install <dir>` | Install packs into an existing repo |
 | `symkit adapt <dir>` | Rewrite vendor adapters only |
+| `symkit guide` | Big-picture flow, cargo vs clone, what to commit |
 
 Adapters default to **grok**. Canonical content always lands in `AGENTS.md` +
 `.agents/` (+ `docs/`). Use `--adapters all` or `--adapters none`.

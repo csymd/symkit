@@ -45,6 +45,7 @@ cargo clippy -- -D warnings
 
 # Discover (shim builds the debug binary if needed)
 ./cli/symkit --help
+./cli/symkit guide
 ./cli/symkit list
 ./cli/symkit show teaching
 
