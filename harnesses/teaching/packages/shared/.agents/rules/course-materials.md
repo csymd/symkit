@@ -22,6 +22,16 @@ Always-on rules for course materials repositories.
 - Keep faculty logistics that students should not see out of student-facing
   trees (or gate them clearly).
 
+## What to commit
+
+- **Usually commit:** `AGENTS.md` (if the course wants shared defaults),
+  `docs/` literacy guides, workspace stubs (`assignments/`, `lectures/`, …).
+- **Usually do not commit:** `.agents/`, `.grok/`, `.claude/`, `.codex/`,
+  `.symkit/`. The installer adds those patterns to `.gitignore`.
+- **Never** put `staff`, `instructor`, or `ta` packs on a student-facing
+  branch. `student_safe: false` is a reminder, not access control — review
+  `git status` before you push.
+
 ## Release hygiene
 
 - Before a student release: no restricted data, no secrets, no accidental

@@ -1,9 +1,9 @@
 ---
 name: study-layout
 description: >
-  Propose or check a research repository layout (analysis workstreams, docs,
-  results, data pointers). Use when starting a study repo or when the tree
-  has drifted.
+  Propose or check a research repository layout. Map existing folders first;
+  do not invent a parallel analysis/ tree. Use when starting a study, installing
+  into an existing lab repo, or when the tree has drifted.
 ---
 
 <!--
@@ -13,7 +13,10 @@ Licensed under the Apache License, Version 2.0.
 
 # Study layout
 
-## Default tree
+Use this on an **existing** study as often as a new one. The tree that is
+already here wins.
+
+## Default tree (new / empty repos)
 
 ```text
 analysis/<workstream>/   # code + README (purpose, inputs, outputs, assumptions)
@@ -24,14 +27,19 @@ data/                    # README + public samples only
 
 ## Steps
 
-1. Read existing README / CONTRIBUTING / `docs/`.
-2. Map current folders to the default tree; do not invent parallel hierarchies.
-3. For each workstream, require a short README.
-4. Flag analysis dumped at repo root.
-5. Propose a minimal move list — do not mass-move without asking.
+1. Read README / CONTRIBUTING / `docs/` and list top-level folders.
+2. Map each existing folder to a role (code, narrative science, artifacts,
+   data pointers). Names may be `R/`, `src/`, `notebooks/`, `paper/` — keep
+   them. Do not add `analysis/` beside a live code tree.
+3. Treat each code cluster with a distinct input/output story as a
+   workstream. Each needs a short README (purpose, inputs, outputs,
+   assumptions) if it does not already have one.
+4. Flag analysis dumped at repo root, and any second parallel hierarchy
+   you would have to invent.
+5. Propose a **minimal** move or README list. Do not mass-move without asking.
 
 ## Output
 
-- Current vs proposed layout
-- Missing READMEs
-- Suggested first workstream if the repo is empty
+- Current map (path → role) vs any proposed change
+- Missing workstream READMEs
+- Suggested first workstream only if the repo is empty

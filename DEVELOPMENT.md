@@ -45,6 +45,7 @@ cargo clippy -- -D warnings
 
 # Discover (shim builds the debug binary if needed)
 ./cli/symkit --help
+./cli/symkit guide
 ./cli/symkit list
 ./cli/symkit show teaching
 
@@ -193,32 +194,39 @@ and extend the smoke script when the behavior is user-visible.
 
 Suggested names: `feat/…`, `fix/…`, `docs/…`, `harness/…`.
 
-Do not force-push `main` or `develop`. This repo is a single Cargo package
-(not a workspace) and does not use SymWorx’s `stage` / crates.io release path.
+Do not force-push `main` or `develop`. 
 
 ## CI
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on **push and
-PRs to `develop` and `main`**: nightly `rustfmt --check`, clippy
-`-D warnings`, `cargo test`, `./tests/smoke.sh`.
-
-[`.github/workflows/release.yml`](.github/workflows/release.yml) runs on
-**`v*` tags** only (re-runs that gate, then opens a GitHub Release). It
-does not publish to crates.io or PyPI.
+PRs to `develop` only** (the quality gate). `stage` and `main` skip
+day-to-day CI (promotions of a SHA that already passed).
+[`.github/workflows/release.yml`](.github/workflows/release.yml) re-runs
+that gate on PRs into `main`, pushes to `release/**`, and `v*` tags.
+Push to `main` is not a Release trigger (the PR already ran it).
+`workflow_dispatch` re-runs `check` only. GitHub Release and crates.io
+publish are gated on `refs/tags/v*`.
 
 ## Releasing
 
-There is no package registry publish. Distribution is: clone
-`csymd/symkit` and run `./cli/symkit`.
+Users install with `cargo install symkit` (embedded catalog + harnesses)
+or by cloning this repo and running `./cli/symkit`.
 
 When a slice is ready:
 
 1. Merge to `develop` with CI green.
-2. Promote to `main`.
-3. Optionally tag an annotated milestone (`v0.1.0`). The release workflow
-   creates the GitHub Release.
+2. On `release/vX.Y.Z` (or develop): `./scripts/bump-version.sh patch --changelog`
+3. Open a PR from `release/vX.Y.Z` (or `develop`) into `main`. Merge when
+   Release `check` is green.
+4. Tag `vX.Y.Z` on that commit (tag must match `[package] version` in
+   `Cargo.toml`). Push the tag. The release workflow runs `check` again,
+   opens the GitHub Release, and publishes `symkit` to crates.io.
 
-Do not invent SemVer automation that is not in the repo.
+crates.io publish uses GitHub Environment `crates-io` and secret
+`CARGO_REGISTRY_TOKEN`. Create that environment and token before the
+first tag you want on the registry. A failed publish does not block the
+GitHub Release. Yank a bad crate version on crates.io if you must; do
+not reuse a burned version.
 
 ## Other notes
 
