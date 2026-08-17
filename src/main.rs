@@ -26,6 +26,7 @@ use symkit::{
         Error,
         Result,
     },
+    help,
     install::{
         self,
         InstallRequest,
@@ -40,6 +41,8 @@ use symkit::{
 #[command(
     name = "symkit",
     about = "Install agent instructions, skills, and optional workspace files into another repo. Does not commit.",
+    long_about = "Install a named harness (teaching, research, engineering, …) and role into a target directory.\n\nCanonical content lands in AGENTS.md + .agents/. Vendor adapters (default: grok) are mirrors. Preview always prints. The installer never commits.",
+    after_help = help::AFTER_HELP,
     disable_help_subcommand = true
 )]
 struct Cli {
@@ -52,48 +55,76 @@ enum Command {
     /// Harnesses, roles, pack summaries
     List,
     /// Role matrix and on-disk paths
-    Show { harness: String },
+    Show {
+        /// Harness id (`symkit list`)
+        harness: String,
+    },
     /// Create or activate a workspace
+    #[command(
+        long_about = "Create the target directory if needed, then install the harness.\nOn a TTY, missing target / harness / role / scaffold are prompted.\nAdd --scaffold to copy workspace folder stubs (skipped if they already exist)."
+    )]
     Init(WorkArgs),
     /// Install packs into an existing repo
+    #[command(
+        long_about = "Install a harness into an existing directory. The target must already exist.\nPass --scaffold only if you also want workspace stubs."
+    )]
     Install(WorkArgs),
     /// Rewrite vendor adapters only
     Adapt {
+        /// Target directory (already installed)
         target: PathBuf,
+        /// Adapter set: grok, claude, codex, all, none
         #[arg(long)]
         adapters: Option<String>,
+        /// Add one adapter (repeatable)
         #[arg(long = "adapter", action = clap::ArgAction::Append)]
         adapter: Vec<String>,
+        /// Same as --adapters all
         #[arg(long = "adapters-all")]
         adapters_all: bool,
     },
+    /// Big-picture flow, cargo install vs clone, what to commit
+    Guide,
 }
 
 #[derive(Args, Default)]
 struct WorkArgs {
+    /// Target directory
     target: Option<PathBuf>,
+    /// Harness id (`symkit list`)
     #[arg(long)]
     harness: Option<String>,
+    /// Role in that harness (`symkit show <harness>`)
     #[arg(long)]
     role: Option<String>,
+    /// Replace the role pack list (role skills are not applied)
     #[arg(long = "pack", action = clap::ArgAction::Append)]
     pack: Vec<String>,
+    /// Extra in-catalog pack on top of the role
     #[arg(long = "also", action = clap::ArgAction::Append)]
     also: Vec<String>,
+    /// Adapter set: grok, claude, codex, all, none (default: grok)
     #[arg(long)]
     adapters: Option<String>,
+    /// Add one adapter (repeatable)
     #[arg(long = "adapter", action = clap::ArgAction::Append)]
     adapter: Vec<String>,
+    /// Same as --adapters all
     #[arg(long = "adapters-all")]
     adapters_all: bool,
+    /// Copy harness workspace stubs (no overwrite unless --force)
     #[arg(long)]
     scaffold: bool,
+    /// Keep leftover role skills / agents / rules
     #[arg(long = "no-prune")]
     no_prune: bool,
+    /// Write without prompting
     #[arg(long = "yes", short = 'y')]
     yes: bool,
+    /// Overwrite existing scaffold files
     #[arg(long)]
     force: bool,
+    /// Print the preview and exit
     #[arg(long)]
     dry_run: bool,
 }
@@ -115,11 +146,15 @@ fn run() -> Result<()> {
 
     match cli.command {
         None => {
-            // clap already printed help if -h; bare invoke → help via clap after we re-parse
+            // clap already printed help if -h; bare invoke → long help (includes FLOW)
             use clap::CommandFactory;
             let mut cmd = Cli::command();
-            cmd.print_help()?;
+            cmd.print_long_help()?;
             println!();
+            Ok(())
+        }
+        Some(Command::Guide) => {
+            print!("{}", help::guide());
             Ok(())
         }
         Some(Command::List) => {

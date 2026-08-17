@@ -7,6 +7,8 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 CLI="$ROOT/cli/symkit"
+# Shim only rebuilds when target/debug/symkit is missing.
+cargo build --manifest-path "$ROOT/Cargo.toml" --quiet
 WORKDIR="$(mktemp -d "${TMPDIR:-/tmp}/symkit-smoke.XXXXXX")"
 trap 'rm -rf "$WORKDIR"' EXIT
 
@@ -17,6 +19,10 @@ pass() { echo "ok  $*"; }
 "$CLI" list | grep -q teaching || fail "list teaching"
 "$CLI" show teaching | grep -q '^instructor	' || fail "show teaching roles"
 "$CLI" show performance | grep -q '^STATUS=active' || fail "performance active"
+"$CLI" --help | grep -q '^FLOW' || fail "help FLOW"
+"$CLI" --help | grep -q 'symkit guide' || fail "help points at guide"
+"$CLI" guide | grep -q 'cargo install' || fail "guide cargo install"
+"$CLI" init --help | grep -q 'Target directory' || fail "init flag help"
 
 # materials then instructor
 T1="$WORKDIR/course"
@@ -125,6 +131,7 @@ TE="$WORKDIR/eng"
 [[ -f "$TE/src/README.md" ]] || fail "engineering scaffold src"
 [[ -f "$TE/.agents/agents/engineer.md" ]] || fail "engineer agent"
 [[ -f "$TE/.agents/skills/write-tests/SKILL.md" ]] || fail "write-tests"
+[[ -f "$TE/.agents/skills/write-docs/SKILL.md" ]] || fail "write-docs on engineer"
 [[ -f "$TE/.agents/rules/match-repo.md" ]] || fail "match-repo rule"
 [[ -d "$TE/.agents/skills/write-prd" ]] && fail "write-prd must not install on engineering"
 

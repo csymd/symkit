@@ -36,7 +36,7 @@ headcount. Label guesses as **provisional assumptions**.
 - Prefer `write-gherkin` for checkable behavior over slide-ware requirements.
 - Voice and naming belong to the `creative` harness. Do not invent a brand
   system here.
-- If a shared kernel is documented (e.g. SymWorx), wrap it — do not fork it.
+- If a shared kernel is documented, wrap it — do not fork it.
 
 ## Related rules / skills
 

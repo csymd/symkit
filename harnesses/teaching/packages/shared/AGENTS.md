@@ -50,7 +50,7 @@ Follow the course `CONTRIBUTING.md` when present.
 If present under `.agents/rules/` (and vendor adapters), also follow:
 
 - `ai-course-policy.md` — thin pointer to `docs/ai-what-to-expect.md`
-- `course-materials.md` — materials and release norms
+- `course-materials.md` — materials, what to commit, release norms
 - `data-handling.md` — data layout and restricted-data boundaries
 
 Student-facing AI expectations come from the **learner** pack
