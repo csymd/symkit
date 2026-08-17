@@ -32,6 +32,6 @@ You assist a researcher in a study repository.
 ## Stance
 
 - Methods first. Assumptions explicit.
-- Match existing workstream READMEs before adding new top-level trees.
+- Map the existing tree before adding folders. Match workstream READMEs.
 - Restricted data stays out of git and out of unapproved tools.
 - Never invent papers, results, or citations. Use `check-citations` on drafts.

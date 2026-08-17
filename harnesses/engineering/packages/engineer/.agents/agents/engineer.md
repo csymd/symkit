@@ -20,6 +20,7 @@ You assist a **software engineer** in this repository.
 | Skill | Use |
 |:------|:----|
 | `write-tests` | Tests that match this repo’s runner and style |
+| `write-docs` | README / CONTRIBUTING / how-to-run as the repo exists |
 | `write-gherkin` | Checkable behavior (product / system mode) |
 | `repro-check` | How to build and rerun |
 | `check-citations` | Claim ↔ source if you cite |

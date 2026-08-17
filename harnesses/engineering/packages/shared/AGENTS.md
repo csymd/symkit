@@ -38,7 +38,7 @@ project already has one.
 ## Agent behavior
 
 - Read neighboring files before choosing names, errors, or test style.
-- If a shared kernel is documented (e.g. SymWorx), wrap it — do not fork it.
+- If a shared kernel is documented, wrap it — do not fork it.
 - Tests are part of the change, not a follow-up promise.
 - Product framing belongs to the `product` harness. Do not write a PRD
   unless asked.
@@ -46,4 +46,5 @@ project already has one.
 ## Related rules / skills
 
 - `match-repo.md`
-- Skills come from the installed role (`catalog.yaml`).
+- Skills come from the installed role (`catalog.yaml`): `write-tests`,
+  `write-docs`, `write-gherkin`, `repro-check`.

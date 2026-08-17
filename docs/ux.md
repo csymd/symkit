@@ -4,10 +4,12 @@ CLI-first. No web app.
 
 ## Flow: create a workspace
 
+`symkit --help` and `symkit guide` print this for end users.
+
 1. Where — target directory
-2. Which harness — teaching / research / ai
-3. Which role — from that harness
-4. Scaffold? — workspace files if the tree is new
+2. Which harness — `symkit list` (teaching, research, engineering, …)
+3. Which role — `symkit show <harness>`
+4. Scaffold? — workspace files if the tree is new (`init --scaffold`)
 5. Adapters — default grok
 6. Preview — always printed
 7. Write — never commit
@@ -15,6 +17,9 @@ CLI-first. No web app.
 
 Interactive `init` asks for missing pieces when stdin is a TTY.
 Scripts should pass `--yes` and all flags.
+
+`install` is the same write path for an existing repo. Skip `--scaffold`
+unless you want stubs.
 
 ## Principles
 

@@ -248,10 +248,10 @@ harnesses:
     roles:
       engineer:
         packages: [shared, engineer]
-        skills: [write-tests, write-gherkin, repro-check]
+        skills: [write-tests, write-docs, write-gherkin, repro-check]
       swe:
         packages: [shared, engineer]
-        skills: [write-tests, write-gherkin, repro-check]
+        skills: [write-tests, write-docs, write-gherkin, repro-check]
       materials:
         packages: [shared]
         skills: [write-gherkin, repro-check]

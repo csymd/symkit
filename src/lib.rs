@@ -6,5 +6,6 @@ pub mod catalog;
 pub mod error;
 pub mod fsutil;
 pub mod gitignore;
+pub mod help;
 pub mod install;
 pub mod kit;

@@ -24,7 +24,12 @@ improvised science.
 changes without labeling them as **provisional assumptions**. Quote or cite
 the aims/SAP when restating design facts.
 
-## Layout (typical)
+## Layout
+
+If this repo already has a tree, **map workstreams onto it**. Do not add a
+parallel `analysis/` next to live `R/`, `src/`, or `notebooks/`.
+
+Typical names when you are starting empty:
 
 | Path | Role |
 |:-----|:-----|
@@ -35,13 +40,14 @@ the aims/SAP when restating design facts.
 
 ## Agent behavior
 
-- Prefer scripts/modules under `analysis/<workstream>/` with a short README
-  (purpose, inputs, outputs, assumptions).
+- Prefer one directory per workstream with a short README (purpose, inputs,
+  outputs, assumptions) — under `analysis/` only when that is the existing
+  convention.
 - Do not dump analysis into a root `main.py`.
 - Do not create empty publication trees unless asked.
 - Keep pre-commit hooks fast.
-- If a shared methods library is documented (e.g. SymWorx), wrap it — do not
-  reimplement algorithms that already exist there.
+- If a shared methods library is documented, wrap it — do not reimplement
+  algorithms that already exist there.
 
 ## Related rules / skills
 

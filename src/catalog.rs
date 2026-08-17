@@ -518,6 +518,7 @@ mod tests {
         let r = cat.resolve("engineering", Some("swe"), &[]).unwrap();
         assert_eq!(r.packages, ["shared", "engineer"]);
         assert!(r.skills.contains(&"write-tests".into()));
+        assert!(r.skills.contains(&"write-docs".into()));
         assert!(r.skills.contains(&"write-gherkin".into()));
         assert!(!r.skills.contains(&"write-prd".into()));
     }
