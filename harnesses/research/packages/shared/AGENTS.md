@@ -46,8 +46,8 @@ Typical names when you are starting empty:
 - Do not dump analysis into a root `main.py`.
 - Do not create empty publication trees unless asked.
 - Keep pre-commit hooks fast.
-- If a shared methods library is documented (e.g. SymWorx), wrap it — do not
-  reimplement algorithms that already exist there.
+- If a shared methods library is documented, wrap it — do not reimplement
+  algorithms that already exist there.
 
 ## Related rules / skills
 

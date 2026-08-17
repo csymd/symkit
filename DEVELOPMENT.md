@@ -199,12 +199,13 @@ Do not force-push `main` or `develop`.
 ## CI
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on **push and
-PRs to `develop` only** (the quality gate). `stage` / `main` / `release/**`
-are locked by rulesets but do not re-run CI on every promotion.
+PRs to `develop` only** (the quality gate). `stage` and `main` skip
+day-to-day CI (promotions of a SHA that already passed).
 [`.github/workflows/release.yml`](.github/workflows/release.yml) re-runs
-that gate on **`v*` tags**, then opens a GitHub Release and publishes
-the single `symkit` crate to crates.io. `workflow_dispatch` re-runs
-`check` only (publish jobs are gated on `refs/tags/v*`).
+that gate on PRs into `main`, pushes to `release/**`, and `v*` tags.
+Push to `main` is not a Release trigger (the PR already ran it).
+`workflow_dispatch` re-runs `check` only. GitHub Release and crates.io
+publish are gated on `refs/tags/v*`.
 
 ## Releasing
 
@@ -215,10 +216,11 @@ When a slice is ready:
 
 1. Merge to `develop` with CI green.
 2. On `release/vX.Y.Z` (or develop): `./scripts/bump-version.sh patch --changelog`
-3. Promote to `main`.
+3. Open a PR from `release/vX.Y.Z` (or `develop`) into `main`. Merge when
+   Release `check` is green.
 4. Tag `vX.Y.Z` on that commit (tag must match `[package] version` in
-   `Cargo.toml`). Push the tag. The release workflow runs `check`, opens
-   the GitHub Release, and publishes `symkit` to crates.io.
+   `Cargo.toml`). Push the tag. The release workflow runs `check` again,
+   opens the GitHub Release, and publishes `symkit` to crates.io.
 
 crates.io publish uses GitHub Environment `crates-io` and secret
 `CARGO_REGISTRY_TOKEN`. Create that environment and token before the
