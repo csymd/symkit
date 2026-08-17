@@ -30,7 +30,7 @@
 #   2. Fill in CHANGELOG.md
 #   3. git diff, commit
 #   4. After merge to main: git tag -a vX.Y.Z && git push origin vX.Y.Z
-#   5. cargo publish
+#      (Release workflow publishes crates.io + GitHub Release)
 #
 # See DEVELOPMENT.md § Releasing.
 
@@ -454,7 +454,7 @@ else
   fi
   echo "  3. Commit on release/v${NEW} (or develop before the cut)"
   echo "  4. After merge to main:  git tag -a v${NEW} -m v${NEW} && git push origin v${NEW}"
-  echo "  5. cargo publish"
+  echo "     (Release workflow publishes crates.io + GitHub Release)"
 fi
 echo
 echo "Accidentally too high?  ./scripts/bump-version.sh set <lower> [--yes]"

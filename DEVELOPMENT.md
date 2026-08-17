@@ -194,8 +194,7 @@ and extend the smoke script when the behavior is user-visible.
 
 Suggested names: `feat/…`, `fix/…`, `docs/…`, `harness/…`.
 
-Do not force-push `main` or `develop`. This repo is a single Cargo package
-(not a workspace) and does not use SymWorx’s `stage` / crates.io release path.
+Do not force-push `main` or `develop`. 
 
 ## CI
 
@@ -203,23 +202,29 @@ Do not force-push `main` or `develop`. This repo is a single Cargo package
 PRs to `develop` only** (the quality gate). `stage` / `main` / `release/**`
 are locked by rulesets but do not re-run CI on every promotion.
 [`.github/workflows/release.yml`](.github/workflows/release.yml) re-runs
-that gate on **`v*` tags**, then opens a GitHub Release. It does not
-publish to crates.io.
+that gate on **`v*` tags**, then opens a GitHub Release and publishes
+the single `symkit` crate to crates.io. `workflow_dispatch` re-runs
+`check` only (publish jobs are gated on `refs/tags/v*`).
 
 ## Releasing
 
-There is no package registry publish. Distribution is: clone
-`csymd/symkit` and run `./cli/symkit`.
+Users install with `cargo install symkit` (embedded catalog + harnesses)
+or by cloning this repo and running `./cli/symkit`.
 
 When a slice is ready:
 
 1. Merge to `develop` with CI green.
 2. On `release/vX.Y.Z` (or develop): `./scripts/bump-version.sh patch --changelog`
 3. Promote to `main`.
-4. Tag `vX.Y.Z`. The release workflow creates the GitHub Release.
-5. `cargo publish` (not automated).
+4. Tag `vX.Y.Z` on that commit (tag must match `[package] version` in
+   `Cargo.toml`). Push the tag. The release workflow runs `check`, opens
+   the GitHub Release, and publishes `symkit` to crates.io.
 
-Do not invent SemVer automation that is not in the repo.
+crates.io publish uses GitHub Environment `crates-io` and secret
+`CARGO_REGISTRY_TOKEN`. Create that environment and token before the
+first tag you want on the registry. A failed publish does not block the
+GitHub Release. Yank a bad crate version on crates.io if you must; do
+not reuse a burned version.
 
 ## Other notes
 
