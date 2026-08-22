@@ -60,6 +60,15 @@ need to wait for an issue to be assigned.
 5. Commit with clear, descriptive messages.
 6. Push your branch and open a Pull Request against **`develop`**.
 
+## Release path
+
+Do **not** open feature PRs straight to `main`. Releases follow the same
+cycle as SymWorx / SymSight:
+
+`develop` → `stage` (FF) → `release/vX.Y.Z` → PR to `main` → merge → **manual** tag `vX.Y.Z`
+
+Details: [DEVELOPMENT.md](DEVELOPMENT.md#branch-model).
+
 ## Submitting pull requests
 
 - **Keep PRs focused** — one logical change per PR is strongly preferred.

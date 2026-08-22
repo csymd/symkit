@@ -83,7 +83,7 @@ enum Command {
         #[arg(long = "adapters-all")]
         adapters_all: bool,
     },
-    /// Big-picture flow, cargo install vs clone, what to commit
+    /// Big-picture flow, GitHub Release vs cargo vs clone, what to commit
     Guide,
 }
 

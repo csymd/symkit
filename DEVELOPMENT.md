@@ -26,8 +26,9 @@ cargo +nightly fmt --version
 
 - `./cli/symkit` builds `target/debug/symkit` if it is missing
 - No Python, no rsync, no network required for install
-- End users of the installer only need **stable** `rustc` / `cargo` (see
-  [docs/install.md](docs/install.md))
+- End users can install a GitHub Release binary with no Rust toolchain
+  (see [docs/install.md](docs/install.md)). Contributors still need
+  **stable** `rustc` / `cargo` plus nightly rustfmt.
 - The binary embeds `catalog.yaml`, `core/`, and `harnesses/` at compile
   time (`include_str!` / `include_dir!`). A checkout still wins over the
   embedded cache so local edits are what `./cli/symkit` installs.
@@ -187,46 +188,71 @@ and extend the smoke script when the behavior is user-visible.
 
 ## Branch model
 
+Same family path as SymWorx / SymSight:
+
+```
+feature/* ──► develop ──► stage ──► release/vX.Y.Z ──► main ──► tag vX.Y.Z
+                 │           │              │             │
+              day-to-day   FF only     release prep    publish
+                 CI        (no CI)     + validation    on tag
+```
+
 | Branch | Role |
 |:-------|:-----|
 | `develop` | Day-to-day integration (open PRs here) |
-| `main` | Stable, review-ready |
+| `stage` | Fast-forward promotion of a green `develop` SHA (no day-to-day CI) |
+| `release/vX.Y.Z` | Release prep; version + CHANGELOG must match |
+| `main` | Stable; tag `vX.Y.Z` here after merge |
 
 Suggested names: `feat/…`, `fix/…`, `docs/…`, `harness/…`.
 
-Do not force-push `main` or `develop`. 
+Do not force-push `main`, `develop`, or `stage`.
 
 ## CI
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on **push and
-PRs to `develop` only** (the quality gate). `stage` and `main` skip
-day-to-day CI (promotions of a SHA that already passed).
+PRs to `develop` only**, plus **`workflow_dispatch`** (manual re-run; no
+publish). `stage` and `main` skip day-to-day CI (promotions of a SHA that
+already passed).
 [`.github/workflows/release.yml`](.github/workflows/release.yml) re-runs
-that gate on PRs into `main`, pushes to `release/**`, and `v*` tags.
+that gate on PRs into `main`, pushes to `release/**`, and `v*` tags, with
+a `release-meta` job (package version matches `release/vX.Y.Z` / tag;
+`CHANGELOG.md` has a `## [X.Y.Z]` section).
 Push to `main` is not a Release trigger (the PR already ran it).
-`workflow_dispatch` re-runs `check` only. GitHub Release and crates.io
-publish are gated on `refs/tags/v*`.
+`workflow_dispatch` re-runs validation only. Platform binaries, GitHub
+Release (archives + `SHA256SUMS`), and crates.io publish are gated on
+`refs/tags/v*` after `release-ready`. Tag builds also write GitHub
+artifact attestations for each archive.
 
 ## Releasing
 
-Users install with `cargo install symkit` (embedded catalog + harnesses)
-or by cloning this repo and running `./cli/symkit`.
+Users install from [GitHub Releases](https://github.com/csymd/symkit/releases)
+(prebuilt binary; no Rust), with `cargo install --locked symkit`, or by
+cloning this repo and running `./cli/symkit`.
 
 When a slice is ready:
 
 1. Merge to `develop` with CI green.
-2. On `release/vX.Y.Z` (or develop): `./scripts/bump-version.sh patch --changelog`
-3. Open a PR from `release/vX.Y.Z` (or `develop`) into `main`. Merge when
-   Release `check` is green.
-4. Tag `vX.Y.Z` on that commit (tag must match `[package] version` in
-   `Cargo.toml`). Push the tag. The release workflow runs `check` again,
-   opens the GitHub Release, and publishes `symkit` to crates.io.
+2. Fast-forward `develop` → `stage` when you want a promotion point.
+3. On `release/vX.Y.Z` (from `stage`, or `develop` if stage lags):
+   `./scripts/bump-version.sh patch --changelog`
+4. Open a PR from `release/vX.Y.Z` into `main`. Merge when Release
+   `release-ready` is green.
+5. Tag `vX.Y.Z` on that commit (tag must match `[package] version` in
+   `Cargo.toml`). Push the tag. The release workflow runs validation
+   again, builds platform archives, opens the GitHub Release (archives +
+   `SHA256SUMS` + attestations), and publishes `symkit` to crates.io.
 
 crates.io publish uses GitHub Environment `crates-io` and secret
 `CARGO_REGISTRY_TOKEN`. Create that environment and token before the
-first tag you want on the registry. A failed publish does not block the
-GitHub Release. Yank a bad crate version on crates.io if you must; do
-not reuse a burned version.
+first tag you want on the registry. A failed crates.io publish does not
+block the GitHub Release. A failed binary build blocks both (so a tag
+never ships notes-only). Yank a bad crate version on crates.io if you
+must; do not reuse a burned version.
+
+Release binaries are unsigned. Apple notarization and Authenticode are
+out of scope until a signing identity exists. Linux archives are musl
+static so they are not pinned to the runner's glibc.
 
 ## Other notes
 

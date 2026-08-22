@@ -11,8 +11,10 @@ Provided via the cSYMd lab.
 ## Quick start
 
 ```bash
-# crates.io (embeds catalog + harnesses)
-cargo install symkit
+# GitHub Release (no Rust toolchain): pick your OS/arch from
+# https://github.com/csymd/symkit/releases
+# crates.io (needs Rust; same embed)
+cargo install --locked symkit
 symkit --help
 symkit guide
 
@@ -95,11 +97,13 @@ cargo test
 ./tests/smoke.sh
 ```
 
-Requires a Rust toolchain. `./cli/symkit` builds the debug binary if needed.
+CI tests require a Rust toolchain. `./cli/symkit` builds the debug binary if
+needed. End users can install a GitHub Release binary instead (see
+[docs/install.md](docs/install.md)).
 
-`cargo install symkit` embeds the catalog and harness trees. Outside a
-checkout, the CLI extracts them to `$XDG_DATA_HOME/symkit/<version>/`.
-Set `SYMKIT_ROOT` to force a checkout.
+GitHub Release binaries and `cargo install --locked symkit` both embed the
+catalog and harness trees. Outside a checkout, the CLI extracts them to
+`$XDG_DATA_HOME/symkit/<version>/`. Set `SYMKIT_ROOT` to force a checkout.
 
 ## Contributing
 
