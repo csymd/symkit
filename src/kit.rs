@@ -30,7 +30,7 @@ pub fn is_kit_root(dir: &Path) -> bool {
 }
 
 /// Prefer SYMKIT_ROOT, then a checkout next to the exe or cwd, then the
-/// versioned cache filled from the binary (cargo install).
+/// versioned cache filled from the binary (GitHub Release / cargo install).
 pub fn find_kit_root() -> Result<PathBuf> {
     if let Ok(raw) = env::var("SYMKIT_ROOT") {
         let p = PathBuf::from(raw);

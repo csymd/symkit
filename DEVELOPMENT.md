@@ -26,8 +26,9 @@ cargo +nightly fmt --version
 
 - `./cli/symkit` builds `target/debug/symkit` if it is missing
 - No Python, no rsync, no network required for install
-- End users of the installer only need **stable** `rustc` / `cargo` (see
-  [docs/install.md](docs/install.md))
+- End users can install a GitHub Release binary with no Rust toolchain
+  (see [docs/install.md](docs/install.md)). Contributors still need
+  **stable** `rustc` / `cargo` plus nightly rustfmt.
 - The binary embeds `catalog.yaml`, `core/`, and `harnesses/` at compile
   time (`include_str!` / `include_dir!`). A checkout still wins over the
   embedded cache so local edits are what `./cli/symkit` installs.
@@ -218,13 +219,16 @@ that gate on PRs into `main`, pushes to `release/**`, and `v*` tags, with
 a `release-meta` job (package version matches `release/vX.Y.Z` / tag;
 `CHANGELOG.md` has a `## [X.Y.Z]` section).
 Push to `main` is not a Release trigger (the PR already ran it).
-`workflow_dispatch` re-runs validation only. GitHub Release and crates.io
-publish are gated on `refs/tags/v*` after `release-ready`.
+`workflow_dispatch` re-runs validation only. Platform binaries, GitHub
+Release (archives + `SHA256SUMS`), and crates.io publish are gated on
+`refs/tags/v*` after `release-ready`. Tag builds also write GitHub
+artifact attestations for each archive.
 
 ## Releasing
 
-Users install with `cargo install symkit` (embedded catalog + harnesses)
-or by cloning this repo and running `./cli/symkit`.
+Users install from [GitHub Releases](https://github.com/csymd/symkit/releases)
+(prebuilt binary; no Rust), with `cargo install --locked symkit`, or by
+cloning this repo and running `./cli/symkit`.
 
 When a slice is ready:
 
@@ -236,13 +240,19 @@ When a slice is ready:
    `release-ready` is green.
 5. Tag `vX.Y.Z` on that commit (tag must match `[package] version` in
    `Cargo.toml`). Push the tag. The release workflow runs validation
-   again, opens the GitHub Release, and publishes `symkit` to crates.io.
+   again, builds platform archives, opens the GitHub Release (archives +
+   `SHA256SUMS` + attestations), and publishes `symkit` to crates.io.
 
 crates.io publish uses GitHub Environment `crates-io` and secret
 `CARGO_REGISTRY_TOKEN`. Create that environment and token before the
-first tag you want on the registry. A failed publish does not block the
-GitHub Release. Yank a bad crate version on crates.io if you must; do
-not reuse a burned version.
+first tag you want on the registry. A failed crates.io publish does not
+block the GitHub Release. A failed binary build blocks both (so a tag
+never ships notes-only). Yank a bad crate version on crates.io if you
+must; do not reuse a burned version.
+
+Release binaries are unsigned. Apple notarization and Authenticode are
+out of scope until a signing identity exists. Linux archives are musl
+static so they are not pinned to the runner's glibc.
 
 ## Other notes
 

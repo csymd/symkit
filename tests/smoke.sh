@@ -22,6 +22,8 @@ pass() { echo "ok  $*"; }
 "$CLI" --help | grep -q '^FLOW' || fail "help FLOW"
 "$CLI" --help | grep -q 'symkit guide' || fail "help points at guide"
 "$CLI" guide | grep -q 'cargo install' || fail "guide cargo install"
+"$CLI" guide | grep -q 'GitHub Release' || fail "guide GitHub Release"
+"$CLI" guide | grep -q 'csymd/symkit/releases' || fail "guide releases URL"
 "$CLI" init --help | grep -q 'Target directory' || fail "init flag help"
 
 # materials then instructor
