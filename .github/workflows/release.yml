@@ -11,8 +11,9 @@
 #
 # Push to main is not a trigger: the PR into main already ran this workflow.
 #
-# Publish (GitHub Release + crates.io) runs only on tags v*, after
-# validation succeeds. Create tags manually after merging release/* → main.
+# Platform binaries, GitHub Release assets, and crates.io publish run only
+# on tags v*, after validation succeeds. Create tags manually after
+# merging release/* → main.
 
 name: Release
 
@@ -156,11 +157,85 @@ jobs:
       - run: cargo test -- --quiet
       - run: ./tests/smoke.sh
 
+  # Native release binaries. Tag only — PRs and release branches skip this.
+  build-binaries:
+    name: ${{ matrix.target }}
+    needs: [release-meta, check]
+    if: needs.release-meta.outputs.is_tag == 'true'
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+          - os: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-musl
+          - os: macos-14
+            target: aarch64-apple-darwin
+          - os: macos-14
+            target: x86_64-apple-darwin
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.target }}
+      - name: Install musl-tools
+        if: endsWith(matrix.target, '-linux-musl')
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y musl-tools
+      - name: Build
+        run: cargo build --release --locked --target "${{ matrix.target }}"
+      - name: Smoke the binary
+        run: |
+          set -euo pipefail
+          BIN="target/${{ matrix.target }}/release/symkit"
+          if [[ "${{ matrix.target }}" == *windows* ]]; then
+            BIN="${BIN}.exe"
+          fi
+          "${BIN}" --help | grep -q FLOW
+          "${BIN}" guide | grep -q 'cargo install'
+      - name: Package
+        id: package
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          ARCHIVE="$(./scripts/package-release-binary.sh \
+            "${{ needs.release-meta.outputs.version }}" \
+            "${{ matrix.target }}" \
+            dist)"
+          REL="dist/$(basename "${ARCHIVE}")"
+          echo "archive=${REL}" >> "${GITHUB_OUTPUT}"
+          ls -l dist
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v3
+        with:
+          subject-path: ${{ steps.package.outputs.archive }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: binary-${{ matrix.target }}
+          path: dist/symkit-*
+          if-no-files-found: error
+          retention-days: 7
+
   # Aggregate gate used by branch protection / required checks
   release-ready:
     name: Release checks passed
     runs-on: ubuntu-latest
-    needs: [release-meta, check]
+    needs: [release-meta, check, build-binaries]
     if: always()
     steps:
       - name: Require all validation jobs
@@ -168,20 +243,37 @@ jobs:
           set -euo pipefail
           echo "release-meta: ${{ needs.release-meta.result }}"
           echo "check: ${{ needs.check.result }}"
+          echo "build-binaries: ${{ needs.build-binaries.result }}"
           test "${{ needs.release-meta.result }}" = "success"
           test "${{ needs.check.result }}" = "success"
+          if [[ "${{ needs.release-meta.outputs.is_tag }}" == "true" ]]; then
+            test "${{ needs.build-binaries.result }}" = "success"
+          else
+            test "${{ needs.build-binaries.result }}" = "skipped"
+          fi
           echo "All release validation jobs passed for v${{ needs.release-meta.outputs.version }}"
           echo "On tag pushes: github-release + publish-crates run next."
 
   github-release:
     name: GitHub Release
     runs-on: ubuntu-latest
-    needs: [release-meta, release-ready]
+    needs: [release-meta, release-ready, build-binaries]
     if: needs.release-meta.outputs.is_tag == 'true' && needs.release-ready.result == 'success'
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: binary-*
+          path: dist
+          merge-multiple: true
+      - name: Checksums
+        run: |
+          set -euo pipefail
+          cd dist
+          ls -l
+          sha256sum symkit-* | tee SHA256SUMS
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -189,6 +281,8 @@ jobs:
           name: v${{ needs.release-meta.outputs.version }}
           generate_release_notes: true
           prerelease: ${{ needs.release-meta.outputs.is_prerelease == 'true' }}
+          fail_on_unmatched_files: true
+          files: dist/*
 
   # Independent of github-release so a crates.io failure cannot block the
   # GitHub Release page.

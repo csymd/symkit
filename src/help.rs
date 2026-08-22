@@ -13,7 +13,7 @@ FLOW
   4. In the target: git status. Commit public / student-safe paths only.
 
 EXAMPLES
-  cargo install symkit          # or clone and use ./cli/symkit
+  cargo install --locked symkit # or GitHub Release / ./cli/symkit
   symkit list
   symkit show teaching
   symkit init ~/course --harness teaching --role instructor --scaffold
@@ -40,13 +40,19 @@ WHAT THIS IS
   or talk to the network.
 
 HOW TO GET THE BINARY
-  cargo install symkit     # embeds catalog + harnesses; first run
-                           # extracts them to $XDG_DATA_HOME/symkit/<version>/
+  GitHub Release           # https://github.com/csymd/symkit/releases
+                           # Linux / macOS / Windows archives; no Rust
+                           # toolchain. SHA256SUMS on the release; optional:
+                           #   gh attestation verify FILE --repo csymd/symkit
+  cargo install --locked symkit
+                           # compile from crates.io (needs Rust)
   ./cli/symkit …           # from a clone; uses that checkout
 
-  Running from inside a symkit checkout uses the files on disk, not
-  the crates.io embed. Set SYMKIT_ROOT to force a checkout.
-  Set SYMKIT_DATA to change the extract parent.
+  Release binaries and cargo install both embed catalog + harnesses;
+  first run extracts them to $XDG_DATA_HOME/symkit/<version>/ (or
+  %LOCALAPPDATA%\\symkit\\<version> on Windows). Running from inside a
+  checkout uses the files on disk, not the embed. Set SYMKIT_ROOT to
+  force a checkout. Set SYMKIT_DATA to change the extract parent.
 
 PRIMARY FLOW
   symkit list                         # harnesses and default roles
@@ -108,6 +114,7 @@ mod tests {
         let g = guide();
         for needle in [
             "cargo install",
+            "GitHub Release",
             "SYMKIT_ROOT",
             "init",
             "install",

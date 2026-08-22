@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- GitHub Release assets: prebuilt `symkit` binaries for Linux (musl x86_64
+  and aarch64), macOS (x86_64 and Apple Silicon), and Windows (x86_64),
+  plus `SHA256SUMS` and GitHub artifact attestations.
+
+### Changed
+
+- Install docs and `symkit guide` lead with GitHub Release binaries; crates.io
+  remains the compile-from-source path (`cargo install --locked symkit`).
 
 ## [0.1.1] - 2026-08-17
 
