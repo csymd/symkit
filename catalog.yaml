@@ -25,6 +25,7 @@ adapters:
 
 canonical:
   agents_md: AGENTS.md
+  agents_overlay: AGENTS-SYMKIT.md
   root: .agents
   rules: .agents/rules
   skills: .agents/skills

@@ -10,7 +10,8 @@ Scaffolded by [symkit](https://github.com/csymd/symkit) (`teaching` harness).
 | `lectures/` | Teachable / study notes |
 | `assignments/` | Graded prompts (submit on the LMS) |
 | `data/public/` | Tiny public or synthetic samples |
-| `AGENTS.md` | Installed agent defaults |
+| `AGENTS.md` | Repo agent rules (installer appends a pointer) |
+| `AGENTS-SYMKIT.md` | Installed harness defaults |
 
 ## Getting started
 

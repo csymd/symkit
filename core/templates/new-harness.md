@@ -2,7 +2,7 @@
 
 1. Copy `examples/teaching-overlay/` or an existing `harnesses/<name>/` tree.
 2. Add packages under `harnesses/<name>/packages/<pkg>/` with any of:
-   - `AGENTS.md`
+   - `AGENTS.md` (installed as `AGENTS-SYMKIT.md`; a pointer is appended to the target `AGENTS.md`)
    - `.agents/rules/`, `.agents/agents/`
    - `docs/`
 3. Add or reuse skill bodies under `core/library/skills/`.

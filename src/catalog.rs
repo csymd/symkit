@@ -51,14 +51,54 @@ pub struct AdaptersConfig {
     pub all: Vec<String>,
 }
 
-#[derive(Debug, Clone, Default, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct Canonical {
+    #[serde(default = "default_agents_md")]
+    pub agents_md: String,
+    #[serde(default = "default_agents_overlay")]
+    pub agents_overlay: String,
     #[serde(default = "default_state")]
     pub state: String,
 }
 
+impl Default for Canonical {
+    fn default() -> Self {
+        Self {
+            agents_md: default_agents_md(),
+            agents_overlay: default_agents_overlay(),
+            state: default_state(),
+        }
+    }
+}
+
+fn default_agents_md() -> String {
+    "AGENTS.md".into()
+}
+
+fn default_agents_overlay() -> String {
+    "AGENTS-SYMKIT.md".into()
+}
+
 fn default_state() -> String {
     ".symkit/state.yaml".into()
+}
+
+impl Canonical {
+    pub fn agents_md(&self) -> &str {
+        if self.agents_md.is_empty() {
+            "AGENTS.md"
+        } else {
+            &self.agents_md
+        }
+    }
+
+    pub fn agents_overlay(&self) -> &str {
+        if self.agents_overlay.is_empty() {
+            "AGENTS-SYMKIT.md"
+        } else {
+            &self.agents_overlay
+        }
+    }
 }
 
 #[derive(Debug, Clone, Default, Deserialize)]
@@ -431,6 +471,13 @@ mod tests {
         assert!(r.skills.contains(&"lab-tutor".into()));
         assert!(!r.skills.contains(&"write-gherkin".into()));
         assert!(!r.skills.contains(&"evaluate-content".into()));
+    }
+
+    #[test]
+    fn canonical_agents_overlay() {
+        let cat = load_repo();
+        assert_eq!(cat.canonical.agents_md(), "AGENTS.md");
+        assert_eq!(cat.canonical.agents_overlay(), "AGENTS-SYMKIT.md");
     }
 
     #[test]

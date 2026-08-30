@@ -31,6 +31,8 @@ T1="$WORKDIR/course"
 mkdir -p "$T1"
 "$CLI" install "$T1" --harness teaching --role materials --yes
 [[ -f "$T1/AGENTS.md" ]] || fail "materials AGENTS.md"
+[[ -f "$T1/AGENTS-SYMKIT.md" ]] || fail "materials AGENTS-SYMKIT.md"
+grep -q 'BEGIN symkit harness' "$T1/AGENTS.md" || fail "materials AGENTS.md pointer"
 [[ -f "$T1/.agents/rules/data-handling.md" ]] || fail "core data-handling"
 [[ -f "$T1/.agents/skills/check-citations/SKILL.md" ]] || fail "core check-citations"
 [[ -f "$T1/.agents/skills/release-materials/SKILL.md" ]] || fail "release-materials"
@@ -152,8 +154,22 @@ T6="$WORKDIR/alladapt"
 mkdir -p "$T6"
 "$CLI" install "$T6" --harness teaching --role materials --adapters all --yes
 [[ -f "$T6/CLAUDE.md" ]] || fail "CLAUDE.md pointer"
+grep -q '@AGENTS-SYMKIT.md' "$T6/CLAUDE.md" || fail "CLAUDE.md includes overlay"
+grep -q '@AGENTS.md' "$T6/CLAUDE.md" || fail "CLAUDE.md includes AGENTS.md"
 [[ -d "$T6/.claude/rules" ]] || fail "claude rules"
 [[ -d "$T6/.codex/skills" ]] || fail "codex skills"
+
+# existing AGENTS.md is never replaced
+T_KEEP="$WORKDIR/keepagents"
+mkdir -p "$T_KEEP"
+printf 'repo-specific keep\n' > "$T_KEEP/AGENTS.md"
+"$CLI" install "$T_KEEP" --harness engineering --role engineer --adapters none --yes
+grep -q 'repo-specific keep' "$T_KEEP/AGENTS.md" || fail "must not clobber AGENTS.md"
+grep -q 'BEGIN symkit harness' "$T_KEEP/AGENTS.md" || fail "must append pointer"
+[[ -f "$T_KEEP/AGENTS-SYMKIT.md" ]] || fail "overlay on existing AGENTS.md"
+"$CLI" install "$T_KEEP" --harness engineering --role engineer --adapters none --yes
+n="$(grep -c 'BEGIN symkit harness' "$T_KEEP/AGENTS.md")"
+[[ "$n" -eq 1 ]] || fail "pointer block once, got $n"
 
 pass "all smoke checks"
 echo "WORKDIR was $WORKDIR (removed)"

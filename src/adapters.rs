@@ -108,13 +108,23 @@ pub fn write_selected_adapters(target: &Path, adapters: &[String]) -> Result<()>
 }
 
 fn write_claude_pointer(target: &Path) -> Result<()> {
-    if target.join("AGENTS.md").is_file() {
-        fs::write(
-            target.join("CLAUDE.md"),
-            "@AGENTS.md\n\n<!-- Adapter for Claude Code. Canonical always-on rules live in AGENTS.md (symkit). -->\n",
-        )?;
-        println!("  adapter CLAUDE.md → @AGENTS.md");
+    let overlay = target.join("AGENTS-SYMKIT.md").is_file();
+    let agents = target.join("AGENTS.md").is_file();
+    if !overlay && !agents {
+        return Ok(());
     }
+    let mut body = String::new();
+    if overlay {
+        body.push_str("@AGENTS-SYMKIT.md\n");
+    }
+    if agents {
+        body.push_str("@AGENTS.md\n");
+    }
+    body.push_str(
+        "\n<!-- Adapter for Claude Code. Harness rules in AGENTS-SYMKIT.md; repo rules in AGENTS.md (symkit). -->\n",
+    );
+    fs::write(target.join("CLAUDE.md"), body)?;
+    println!("  adapter CLAUDE.md → harness/repo AGENTS files");
     Ok(())
 }
 
