@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+
+## [0.2.0] - 2026-09-02
+
+### Added
+
 - Install writes harness `AGENTS.md` to `AGENTS-SYMKIT.md` and appends a
   pointer on `AGENTS.md`. Existing `AGENTS.md` is never replaced.
 - `--docs <id>` copies catalogued faculty-owned blanks into `docs/` or
@@ -70,6 +77,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version Links
 
+[0.2.0]: https://github.com/csymd/symkit/releases/tag/v0.2.0
 [0.1.2]: https://github.com/csymd/symkit/releases/tag/v0.1.2
 [0.1.1]: https://github.com/csymd/symkit/releases/tag/v0.1.1
 [0.1.0]: https://github.com/csymd/symkit/releases/tag/v0.1.0
