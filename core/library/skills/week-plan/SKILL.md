@@ -51,7 +51,7 @@ Prefer reading files in the course repo (`docs/course-calendar.md`,
 ### 1. Anchor
 
 - Session identity (module/day title)
-- Objectives (from materials; mark gaps if missing)
+- Objectives (from `docs/slos.md` / `documents/slos.md` and module cards; mark gaps if missing)
 - Student-facing prep they should have done
 - Deliverables due soon (LMS vs in-class)
 

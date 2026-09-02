@@ -24,7 +24,7 @@ symkit guide
  
 # New workspace (scaffold + instructor packs + grok adapter)
 symkit init /path/to/new-course \
-  --harness teaching --role instructor --scaffold
+  --harness teaching --role instructor --scaffold --docs slos
 
 # Existing repo
 symkit install /path/to/existing-study \
@@ -85,7 +85,8 @@ explicitly (`--pack`).
 ## What to commit in a target repo
 
 **Usually commit:** `AGENTS.md` (repo rules plus the harness pointer),
-`AGENTS-SYMKIT.md` (harness defaults), `docs/` literacy guides, workspace
+`AGENTS-SYMKIT.md` (harness defaults), `docs/` literacy guides, faculty-owned
+blanks from `--docs` (`docs/slos.md`, `docs/aims.md`, …), workspace
 scaffold (`assignments/`, `analysis/`, …).
 
 **Usually do not commit:** `.agents/`, `.grok/`, `.claude/`, `.codex/`, `.symkit/`.

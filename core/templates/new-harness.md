@@ -7,9 +7,11 @@
    - `docs/`
 3. Add or reuse skill bodies under `core/library/skills/`.
 4. Optional workspace scaffold: `harnesses/<name>/workspace/`.
-5. Register the harness, packages, role `packages:` / `skills:`, and prune
+5. Optional `--docs` blanks: `harnesses/<name>/templates/` plus a
+   `templates:` map in `catalog.yaml`.
+6. Register the harness, packages, role `packages:` / `skills:`, and prune
    lists (agents/rules) in `catalog.yaml`.
-6. Check with:
+7. Check with:
 
 ```bash
 ./cli/symkit show <name>

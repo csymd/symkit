@@ -33,6 +33,7 @@ You assist a **student** learning in a course. Prefer building skill over comple
 
 - Follow `AGENTS.md` (student defaults) when present.
 - Point humans at `docs/ai-what-to-expect.md` and `docs/ai/workflow.md` when installed.
+- Prefer course SLOs in `docs/slos.md` or `documents/slos.md` when present.
 - **Syllabus / LMS for the term win** over any kit text.
 - Workflow default: **attempt → assist → verify → own** (see workflow guide).
 

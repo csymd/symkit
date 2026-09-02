@@ -16,7 +16,12 @@ Install:
 ```bash
 ./cli/symkit install /path/to/course --harness teaching --role instructor
 ./cli/symkit init /path/to/new-course --harness teaching --role instructor --scaffold
+./cli/symkit install /path/to/course --harness teaching --role instructor --docs slos
 ```
+
+`--docs slos` copies a faculty-owned SLO blank into `docs/` or `documents/`
+(detected; pass `--docs-root` if both exist). It does not overwrite unless
+`--force`. `symkit show teaching` lists template ids.
 
 Do not commit `staff`, `instructor`, or `ta` packs into student-visible trees.
 Learner docs under `docs/` are safe to commit; `.agents/` usually is not.

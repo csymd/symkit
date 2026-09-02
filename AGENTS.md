@@ -92,7 +92,7 @@ Requires rustup with **stable** (build/clippy/test) and **nightly**
 
 | Path | Role |
 |:-----|:-----|
-| [`catalog.yaml`](catalog.yaml) | Harnesses, packs, roles, prune, adapters |
+| [`catalog.yaml`](catalog.yaml) | Harnesses, packs, roles, prune, adapters, `--docs` templates |
 | [`src/catalog.rs`](src/catalog.rs) | Load + resolve |
 | [`src/install.rs`](src/install.rs) | Scaffold, merge, prune, state |
 | [`src/adapters.rs`](src/adapters.rs) | Vendor mirrors |
