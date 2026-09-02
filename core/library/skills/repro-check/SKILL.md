@@ -31,7 +31,7 @@ second environment manager.
 - [ ] Seeds / config files committed if the run is stochastic
 - [ ] Restricted data paths are external and documented, not committed
 - [ ] Generated large binaries are gitignored or asked about
-- [ ] Assumptions that are not in the aims are labeled provisional
+- [ ] Assumptions that are not in the aims (`docs/aims.md` or `documents/aims.md`) are labeled provisional
 
 ## Output
 

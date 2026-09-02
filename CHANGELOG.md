@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Install writes harness `AGENTS.md` to `AGENTS-SYMKIT.md` and appends a
   pointer on `AGENTS.md`. Existing `AGENTS.md` is never replaced.
+- `--docs <id>` copies catalogued faculty-owned blanks into `docs/` or
+  `documents/` (copy-if-missing unless `--force`). Teaching: `slos`.
+  Research: `aims`, `protocol`. `symkit show` lists ids.
 
 ### Changed
 

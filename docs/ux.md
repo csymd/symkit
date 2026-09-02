@@ -10,6 +10,8 @@ CLI-first. No web app.
 2. Which harness — `symkit list` (teaching, research, engineering, …)
 3. Which role — `symkit show <harness>`
 4. Scaffold? — workspace files if the tree is new (`init --scaffold`)
+   Optional `--docs <id>` copies a catalogued blank into `docs/` or
+   `documents/` (copy-if-missing unless `--force`)
 5. Adapters — default grok
 6. Preview — always printed
 7. Write — never commit

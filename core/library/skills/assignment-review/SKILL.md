@@ -66,7 +66,7 @@ Score each: **Pass / Needs work / Blocker**, with evidence.
 
 ## Context
 - Paths:
-- Objectives source:
+- Objectives source: (`docs/slos.md` or `documents/slos.md` when present, else the assignment)
 - Intended student time:
 - AI stance (from handout):
 

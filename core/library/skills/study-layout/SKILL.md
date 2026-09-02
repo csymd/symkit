@@ -20,7 +20,7 @@ already here wins.
 
 ```text
 analysis/<workstream>/   # code + README (purpose, inputs, outputs, assumptions)
-docs/                    # aims, protocol, SAP
+docs/                    # aims.md, protocol.md, SAP (or documents/)
 results/<workstream>/    # generated tables/figures
 data/                    # README + public samples only
 ```

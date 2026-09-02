@@ -15,6 +15,17 @@ published branch (`main` unless the repo says otherwise). Graded work is
 submitted on the course LMS, not to this repository, unless the course
 explicitly says otherwise.
 
+## Source of course truth
+
+1. Syllabus / LMS for the term
+2. Course SLOs when present (`docs/slos.md` or `documents/slos.md`)
+3. Module cards and assignment objectives (must not contradict 1–2)
+4. The instructor of record
+
+**Do not invent** learning outcomes, syllabus dates, grading weights, student
+records, or institutional policy. If the SLO file is missing or still
+placeholder, ask.
+
 ## Hard rules
 
 - **Never** commit credentialed, DUA-restricted, clinical, or personally
@@ -51,6 +62,7 @@ If present under `.agents/rules/` (and vendor adapters), also follow:
 
 - `ai-course-policy.md` — thin pointer to `docs/ai-what-to-expect.md`
 - `course-materials.md` — materials, what to commit, release norms
+- `slos-as-truth.md` — published course outcomes; do not invent SLOs
 - `data-handling.md` — data layout and restricted-data boundaries
 
 Student-facing AI expectations come from the **learner** pack

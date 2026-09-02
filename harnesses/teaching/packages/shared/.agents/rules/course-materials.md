@@ -25,7 +25,8 @@ Always-on rules for course materials repositories.
 ## What to commit
 
 - **Usually commit:** `AGENTS.md` (if the course wants shared defaults),
-  `docs/` literacy guides, workspace stubs (`assignments/`, `lectures/`, …).
+  `docs/` literacy guides, course SLOs (`docs/slos.md` or `documents/slos.md`),
+  workspace stubs (`assignments/`, `lectures/`, …).
 - **Usually do not commit:** `.agents/`, `.grok/`, `.claude/`, `.codex/`,
   `.symkit/`. The installer adds those patterns to `.gitignore`.
 - **Never** put `staff`, `instructor`, or `ta` packs on a student-facing

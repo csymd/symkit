@@ -46,6 +46,10 @@ harnesses:
     description: Course materials, staff and learner agents, assignment structure
     default_role: instructor
     workspace: harnesses/teaching/workspace
+    templates:
+      slos:
+        path: harnesses/teaching/templates/slos.md
+        dest: slos.md
     packages:
       shared:
         description: Materials AGENTS, release checklist, course-materials rules
@@ -105,6 +109,13 @@ harnesses:
     description: Experiment layout, reproducibility, paper-oriented research repos
     default_role: researcher
     workspace: harnesses/research/workspace
+    templates:
+      aims:
+        path: harnesses/research/templates/aims.md
+        dest: aims.md
+      protocol:
+        path: harnesses/research/templates/protocol.md
+        dest: protocol.md
     packages:
       shared:
         description: Research AGENTS, aims-as-truth, layout conventions

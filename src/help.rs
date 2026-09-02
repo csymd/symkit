@@ -9,6 +9,7 @@ FLOW
   1. list / show     pick a harness and role
   2. init DIR        new workspace  (add --scaffold for folder stubs)
      install DIR     existing repo  (pass --scaffold only if you want stubs)
+                     --docs ID      copy a catalogued blank (slos, aims, …)
   3. Read the preview. Nothing is committed.
   4. In the target: git status. Commit public / student-safe paths only.
 
@@ -16,8 +17,8 @@ EXAMPLES
   cargo install --locked symkit # or GitHub Release / ./cli/symkit
   symkit list
   symkit show teaching
-  symkit init ~/course --harness teaching --role instructor --scaffold
-  symkit install ~/study --harness research --role researcher
+  symkit init ~/course --harness teaching --role instructor --scaffold --docs slos
+  symkit install ~/study --harness research --role researcher --docs aims --docs protocol
 
 WRITES   AGENTS-SYMKIT.md (harness, last pack wins), AGENTS.md pointer
          (never replaces existing), .agents/, pack docs/, vendor adapters
@@ -67,7 +68,11 @@ PRIMARY FLOW
   install  requires an existing directory and --harness.
 
   Preview always prints. Confirm, or pass --yes. --dry-run exits after
-  the preview. --force overwrites existing scaffold files.
+  the preview. --force overwrites existing scaffold files and --docs copies.
+
+  --docs <id> copies a catalogued faculty-owned blank into docs/ or
+  documents/ (detected; --docs-root if both exist). Copy-if-missing unless
+  --force. symkit show <harness> lists ids.
 
 ADAPTERS
   Canonical trees are AGENTS-SYMKIT.md + .agents/ (+ docs/). AGENTS.md
@@ -78,8 +83,8 @@ ADAPTERS
 
 WHAT TO COMMIT IN THE TARGET
   Usually yes:  AGENTS.md (repo rules + pointer), AGENTS-SYMKIT.md
-                (harness defaults), docs/ literacy or aims, workspace
-                stubs (assignments/, analysis/, …)
+                (harness defaults), docs/ literacy or aims, --docs blanks
+                (slos.md, aims.md, …), workspace stubs (assignments/, …)
   Usually no:   .agents/, .grok/, .claude/, .codex/, .symkit/
   Teaching:     staff / instructor / ta packs stay off student-facing git.
 
@@ -124,6 +129,7 @@ mod tests {
             "install",
             "staff / instructor / ta",
             "--also",
+            "--docs",
         ] {
             assert!(g.contains(needle), "guide missing {needle:?}");
         }

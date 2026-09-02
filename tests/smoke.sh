@@ -25,6 +25,10 @@ pass() { echo "ok  $*"; }
 "$CLI" guide | grep -q 'GitHub Release' || fail "guide GitHub Release"
 "$CLI" guide | grep -q 'csymd/symkit/releases' || fail "guide releases URL"
 "$CLI" init --help | grep -q 'Target directory' || fail "init flag help"
+"$CLI" init --help | grep -q -- '--docs' || fail "init --docs flag"
+"$CLI" show teaching | grep -q '^slos	' || fail "show teaching slos template"
+"$CLI" show research | grep -q '^aims	' || fail "show research aims template"
+"$CLI" show research | grep -q '^protocol	' || fail "show research protocol template"
 
 # materials then instructor
 T1="$WORKDIR/course"
@@ -77,6 +81,7 @@ T3="$WORKDIR/newcourse"
 echo 'keep-me' > "$T3/README.md"
 "$CLI" init "$T3" --harness teaching --role materials --scaffold --yes
 grep -q keep-me "$T3/README.md" || fail "scaffold must not clobber README without --force"
+[[ -f "$T3/docs/slos.md" ]] && fail "scaffold must not copy slos.md without --docs"
 
 # research + ai
 T4="$WORKDIR/study"
@@ -170,6 +175,43 @@ grep -q 'BEGIN symkit harness' "$T_KEEP/AGENTS.md" || fail "must append pointer"
 "$CLI" install "$T_KEEP" --harness engineering --role engineer --adapters none --yes
 n="$(grep -c 'BEGIN symkit harness' "$T_KEEP/AGENTS.md")"
 [[ "$n" -eq 1 ]] || fail "pointer block once, got $n"
+
+# --docs templates
+T_SLO="$WORKDIR/slo-course"
+"$CLI" init "$T_SLO" --harness teaching --role materials --scaffold --docs slos --yes
+[[ -f "$T_SLO/docs/slos.md" ]] || fail "docs slos copied"
+[[ -f "$T_SLO/.agents/rules/slos-as-truth.md" ]] || fail "slos-as-truth rule"
+echo 'faculty-slo' > "$T_SLO/docs/slos.md"
+"$CLI" install "$T_SLO" --harness teaching --role materials --docs slos --yes
+grep -q faculty-slo "$T_SLO/docs/slos.md" || fail "docs slos must not clobber"
+"$CLI" install "$T_SLO" --harness teaching --role materials --docs slos --force --yes
+grep -q faculty-slo "$T_SLO/docs/slos.md" && fail "docs slos --force should replace"
+
+T_DOCUMENTS="$WORKDIR/documents-course"
+mkdir -p "$T_DOCUMENTS/documents"
+"$CLI" install "$T_DOCUMENTS" --harness teaching --role materials --docs slos --yes
+[[ -f "$T_DOCUMENTS/documents/slos.md" ]] || fail "slos into documents/"
+[[ -f "$T_DOCUMENTS/docs/slos.md" ]] && fail "must not create docs/ when documents/ exists"
+
+T_BOTH="$WORKDIR/both-docs"
+mkdir -p "$T_BOTH/docs" "$T_BOTH/documents"
+if "$CLI" install "$T_BOTH" --harness teaching --role materials --docs slos --yes 2>"$WORKDIR/err-docs"; then
+  fail "should require --docs-root when both exist"
+fi
+grep -q 'docs-root' "$WORKDIR/err-docs" || fail "ambiguous docs-root message"
+"$CLI" install "$T_BOTH" --harness teaching --role materials --docs slos --docs-root documents --yes
+[[ -f "$T_BOTH/documents/slos.md" ]] || fail "docs-root documents"
+[[ -f "$T_BOTH/docs/slos.md" ]] && fail "docs-root documents must not write docs/"
+
+T_AIMS="$WORKDIR/aims-study"
+"$CLI" init "$T_AIMS" --harness research --role researcher --scaffold --docs aims --docs protocol --yes
+[[ -f "$T_AIMS/docs/aims.md" ]] || fail "aims.md"
+[[ -f "$T_AIMS/docs/protocol.md" ]] || fail "protocol.md"
+
+if "$CLI" install "$T_SLO" --harness teaching --role materials --docs nope --yes 2>"$WORKDIR/err-tmpl"; then
+  fail "unknown doc template should fail"
+fi
+grep -q 'unknown doc template' "$WORKDIR/err-tmpl" || fail "unknown template message"
 
 pass "all smoke checks"
 echo "WORKDIR was $WORKDIR (removed)"

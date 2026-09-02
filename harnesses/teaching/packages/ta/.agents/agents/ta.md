@@ -40,6 +40,7 @@ suggest the instructor role.
 
 - `student-engagement` — privacy, tone, non-identifying labels
 - Shared course rules when `shared` is installed
+- Published SLOs (`docs/slos.md` or `documents/slos.md`) when present; do not rewrite them
 
 ## Working style
 
