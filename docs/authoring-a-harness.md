@@ -9,7 +9,7 @@ registered in `catalog.yaml`.
 harnesses/<name>/
   README.md
   packages/<pkg>/
-    AGENTS.md                 # last pack wins
+    AGENTS.md                 # copied to target AGENTS-SYMKIT.md (last pack wins)
     .agents/rules/*.md
     .agents/agents/*.md
     docs/                     # merged into target docs/

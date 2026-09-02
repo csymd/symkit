@@ -97,7 +97,9 @@ Do not pass `--scaffold` onto a live tree unless you want folder stubs
 
 ## Adapters
 
-Canonical content is always `AGENTS.md` + `.agents/`. Adapters are mirrors:
+Harness `AGENTS.md` is written as `AGENTS-SYMKIT.md` (last pack wins). A
+pointer is appended to `AGENTS.md`; existing `AGENTS.md` is never replaced.
+Canonical trees also include `.agents/`. Adapters are mirrors:
 
 ```bash
 symkit install DIR --harness teaching --role instructor --adapters all

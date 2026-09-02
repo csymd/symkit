@@ -80,7 +80,10 @@ pub fn preview(req: &InstallRequest) {
     } else {
         println!("Scaffold: {scaf} ({})", req.resolved.workspace);
     }
-    println!("AGENTS.md: last pack that ships one wins");
+    println!(
+        "AGENTS.md: append pointer (never replace); {} last pack that ships one wins",
+        req.catalog.canonical.agents_overlay()
+    );
     if !req.resolved.private.is_empty() {
         println!(
             "Private:  {}  (do not commit to student-facing trees)",
@@ -163,8 +166,16 @@ pub fn run(req: &InstallRequest) -> Result<()> {
 
     install_library_skills(req)?;
 
+    let mut wrote_overlay = false;
     for pkg in &req.resolved.packages {
-        install_package(&req.kit_root, &req.target, &req.catalog, &req.resolved.harness, pkg)?;
+        wrote_overlay |= install_package(&req.kit_root, &req.target, &req.catalog, &req.resolved.harness, pkg)?;
+    }
+    if wrote_overlay {
+        ensure_agents_md_pointer(
+            &req.target,
+            req.catalog.canonical.agents_md(),
+            req.catalog.canonical.agents_overlay(),
+        )?;
     }
 
     println!();
@@ -209,7 +220,7 @@ fn scaffold_workspace(kit: &Path, target: &Path, rel: &str, force: bool) -> Resu
     Ok(())
 }
 
-fn install_package(kit: &Path, target: &Path, catalog: &Catalog, harness: &str, name: &str) -> Result<()> {
+fn install_package(kit: &Path, target: &Path, catalog: &Catalog, harness: &str, name: &str) -> Result<bool> {
     let rel = catalog.package_path(harness, name)?;
     let src = kit.join(&rel);
     if !src.is_dir() {
@@ -220,10 +231,13 @@ fn install_package(kit: &Path, target: &Path, catalog: &Catalog, harness: &str, 
     if !safe {
         println!("  note: '{name}' is staff-local — do not commit to student-facing trees");
     }
+    let mut wrote_overlay = false;
     let agents_md = src.join("AGENTS.md");
     if agents_md.is_file() {
-        fs::copy(&agents_md, target.join("AGENTS.md"))?;
-        println!("  AGENTS.md ← {}", agents_md.display());
+        let overlay = catalog.canonical.agents_overlay();
+        fs::copy(&agents_md, target.join(overlay))?;
+        println!("  {overlay} ← {}", agents_md.display());
+        wrote_overlay = true;
     }
     merge_tree(
         &src.join(".agents").join("rules"),
@@ -241,6 +255,41 @@ fn install_package(kit: &Path, target: &Path, catalog: &Catalog, harness: &str, 
     if docs.is_dir() {
         merge_tree(&docs, &target.join("docs"))?;
         println!("  docs/ ← {}/docs/", rel.display());
+    }
+    Ok(wrote_overlay)
+}
+
+const AGENTS_POINTER_BEGIN: &str = "<!-- BEGIN symkit harness (do not edit this block) -->";
+const AGENTS_POINTER_END: &str = "<!-- END symkit harness -->";
+
+fn agents_pointer_block(agents_md: &str, overlay: &str) -> String {
+    format!(
+        "{AGENTS_POINTER_BEGIN}\nRead [`{overlay}`]({overlay}) and follow it as additional always-on project rules from the installed symkit harness. Instructions in this `{agents_md}` take precedence when they conflict.\n{AGENTS_POINTER_END}\n"
+    )
+}
+
+fn ensure_agents_md_pointer(target: &Path, agents_md: &str, overlay: &str) -> Result<()> {
+    let path = target.join(agents_md);
+    let block = agents_pointer_block(agents_md, overlay);
+    if path.is_file() {
+        let existing = fs::read_to_string(&path)?;
+        if existing.contains(AGENTS_POINTER_BEGIN) {
+            println!("  {agents_md}: harness pointer already present");
+            return Ok(());
+        }
+        let mut out = existing;
+        if !out.is_empty() && !out.ends_with('\n') {
+            out.push('\n');
+        }
+        if !out.is_empty() {
+            out.push('\n');
+        }
+        out.push_str(&block);
+        fs::write(&path, out)?;
+        println!("  {agents_md}: appended harness pointer → {overlay}");
+    } else {
+        fs::write(&path, format!("# {agents_md}\n\n{block}"))?;
+        println!("  {agents_md}: wrote harness pointer → {overlay}");
     }
     Ok(())
 }
@@ -392,4 +441,34 @@ pub fn adapt_only(target: &Path, adapters: &[String]) -> Result<()> {
     write_selected_adapters(target, adapters)?;
     ensure_agent_gitignore(target)?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use tempfile::tempdir;
+
+    use super::*;
+
+    #[test]
+    fn pointer_creates_agents_md() {
+        let dir = tempdir().unwrap();
+        ensure_agents_md_pointer(dir.path(), "AGENTS.md", "AGENTS-SYMKIT.md").unwrap();
+        let text = fs::read_to_string(dir.path().join("AGENTS.md")).unwrap();
+        assert!(text.contains(AGENTS_POINTER_BEGIN));
+        assert!(text.contains("AGENTS-SYMKIT.md"));
+        assert!(text.contains("take precedence"));
+    }
+
+    #[test]
+    fn pointer_appends_without_clobber() {
+        let dir = tempdir().unwrap();
+        let path = dir.path().join("AGENTS.md");
+        fs::write(&path, "repo-specific keep\n").unwrap();
+        ensure_agents_md_pointer(dir.path(), "AGENTS.md", "AGENTS-SYMKIT.md").unwrap();
+        ensure_agents_md_pointer(dir.path(), "AGENTS.md", "AGENTS-SYMKIT.md").unwrap();
+        let text = fs::read_to_string(&path).unwrap();
+        assert!(text.starts_with("repo-specific keep"));
+        assert_eq!(text.matches(AGENTS_POINTER_BEGIN).count(), 1);
+        assert!(text.contains("AGENTS-SYMKIT.md"));
+    }
 }

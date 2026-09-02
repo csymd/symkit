@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added 
+### Added
+
+- Install writes harness `AGENTS.md` to `AGENTS-SYMKIT.md` and appends a
+  pointer on `AGENTS.md`. Existing `AGENTS.md` is never replaced.
 
 ### Changed
 

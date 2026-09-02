@@ -65,8 +65,10 @@ examples/             how to add a custom overlay
 | `symkit adapt <dir>` | Rewrite vendor adapters only |
 | `symkit guide` | Big-picture flow, cargo vs clone, what to commit |
 
-Adapters default to **grok**. Canonical content always lands in `AGENTS.md` +
-`.agents/` (+ `docs/`). Use `--adapters all` or `--adapters none`.
+Adapters default to **grok**. Harness `AGENTS.md` lands in `AGENTS-SYMKIT.md`
+(last pack wins). A pointer is appended to `AGENTS.md`; an existing file is
+never replaced. Canonical trees also include `.agents/` (+ `docs/`). Use
+`--adapters all` or `--adapters none`.
 
 ## Teaching roles
 
@@ -82,8 +84,9 @@ explicitly (`--pack`).
 
 ## What to commit in a target repo
 
-**Usually commit:** `AGENTS.md` (if you want shared defaults), `docs/` literacy
-guides, workspace scaffold (`assignments/`, `analysis/`, …).
+**Usually commit:** `AGENTS.md` (repo rules plus the harness pointer),
+`AGENTS-SYMKIT.md` (harness defaults), `docs/` literacy guides, workspace
+scaffold (`assignments/`, `analysis/`, …).
 
 **Usually do not commit:** `.agents/`, `.grok/`, `.claude/`, `.codex/`, `.symkit/`.
 The installer adds those patterns to the target `.gitignore`.

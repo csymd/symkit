@@ -96,8 +96,10 @@ tests/smoke.sh        installer behavior
 4. `core/rules/` merges into the target `.agents/rules/`.
 5. Library skills listed on the role (plus `core.always_skills`) copy into
    `.agents/skills/<name>/`. Other library skills are pruned.
-6. Each resolved package merges `AGENTS.md` (last pack wins), `.agents/`
-   (rules/agents; leftover package skills if any), and `docs/`.
+6. Each resolved package copies pack `AGENTS.md` to `AGENTS-SYMKIT.md`
+   (last pack wins) and merges `.agents/` (rules/agents; leftover package
+   skills if any) and `docs/`. After packs, a pointer block is appended to
+   `AGENTS.md` (created if missing; never replaced).
 7. Selected adapters mirror `.agents/` into `.grok/`, `.claude/`, and/or
    `.codex/` (default: grok).
 8. Target `.gitignore` is updated additively (`.agents/`, vendor trees,
@@ -155,9 +157,9 @@ Rust / C-style: `//`. Python, shell, YAML, TOML: `#`. Markdown: an HTML comment.
 **Keep** the short header on:
 
 - Engine: `src/`, `cli/symkit`, `tests/smoke.sh`, `Cargo.toml`, `catalog.yaml`
-- Pack-owned content the installer copies: package `AGENTS.md`,
-  `.agents/{rules,skills,agents}`, package `docs/`, `core/rules/`,
-  `core/library/skills/`
+- Pack-owned content the installer copies: package `AGENTS.md` (as
+  `AGENTS-SYMKIT.md` in the target), `.agents/{rules,skills,agents}`,
+  package `docs/`, `core/rules/`, `core/library/skills/`
 - Authoring templates in `core/templates/` (they seed installed content)
 
 **Do not** put headers on:
@@ -170,7 +172,8 @@ Rust / C-style: `//`. Python, shell, YAML, TOML: `#`. Markdown: an HTML comment.
 
 ## Tests
 
-`cargo test` covers catalog resolve, adapter parsing, and gitignore.
+`cargo test` covers catalog resolve, adapter parsing, gitignore, and the
+`AGENTS.md` harness pointer.
 
 [`tests/smoke.sh`](tests/smoke.sh) is the integration gate. It checks:
 

@@ -19,8 +19,9 @@ EXAMPLES
   symkit init ~/course --harness teaching --role instructor --scaffold
   symkit install ~/study --harness research --role researcher
 
-WRITES   AGENTS.md, .agents/, pack docs/, vendor adapters (default: grok),
-         additive .gitignore, .symkit/state.yaml
+WRITES   AGENTS-SYMKIT.md (harness, last pack wins), AGENTS.md pointer
+         (never replaces existing), .agents/, pack docs/, vendor adapters
+         (default: grok), additive .gitignore, .symkit/state.yaml
 SKIPS    git commit, network, installing into this kit repo
 
   Full flow:  symkit guide
@@ -35,9 +36,10 @@ symkit {} — install agent harnesses into another repo
 
 WHAT THIS IS
   A catalog-driven installer. You pick a harness (domain) and a role
-  (who you are). It copies AGENTS.md, rules, skills, and optional
-  workspace stubs into a target directory. It does not commit, push,
-  or talk to the network.
+  (who you are). It copies harness AGENTS.md to AGENTS-SYMKIT.md,
+  appends a pointer on AGENTS.md (never replaces it), and copies rules,
+  skills, and optional workspace stubs into a target directory. It does
+  not commit, push, or talk to the network.
 
 HOW TO GET THE BINARY
   GitHub Release           # https://github.com/csymd/symkit/releases
@@ -68,14 +70,16 @@ PRIMARY FLOW
   the preview. --force overwrites existing scaffold files.
 
 ADAPTERS
-  Canonical trees are always AGENTS.md + .agents/ (+ docs/).
+  Canonical trees are AGENTS-SYMKIT.md + .agents/ (+ docs/). AGENTS.md
+  is the repo's file: a pointer is appended, never replaced.
   Default adapter: grok (.grok/). --adapters all|none|grok,claude,codex
   adapt DIR rewrites vendor mirrors only; --adapters none does not
   delete trees already on disk.
 
 WHAT TO COMMIT IN THE TARGET
-  Usually yes:  AGENTS.md (if you want shared defaults), docs/ literacy
-                or aims, workspace stubs (assignments/, analysis/, …)
+  Usually yes:  AGENTS.md (repo rules + pointer), AGENTS-SYMKIT.md
+                (harness defaults), docs/ literacy or aims, workspace
+                stubs (assignments/, analysis/, …)
   Usually no:   .agents/, .grok/, .claude/, .codex/, .symkit/
   Teaching:     staff / instructor / ta packs stay off student-facing git.
 

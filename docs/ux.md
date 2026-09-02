@@ -24,7 +24,8 @@ unless you want stubs.
 ## Principles
 
 - Preview before write
-- Last pack wins for `AGENTS.md`; trees merge
+- Last pack wins for `AGENTS-SYMKIT.md`; `AGENTS.md` gets a pointer only
+  (never replaced); `.agents/` and `docs/` merge
 - Private packs are loud
 - Target `.gitignore` is updated, not replaced
 - One harness per target (warn if a second is installed)

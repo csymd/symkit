@@ -41,7 +41,7 @@ use symkit::{
 #[command(
     name = "symkit",
     about = "Install agent instructions, skills, and optional workspace files into another repo. Does not commit.",
-    long_about = "Install a named harness (teaching, research, engineering, …) and role into a target directory.\n\nCanonical content lands in AGENTS.md + .agents/. Vendor adapters (default: grok) are mirrors. Preview always prints. The installer never commits.",
+    long_about = "Install a named harness (teaching, research, engineering, …) and role into a target directory.\n\nHarness AGENTS.md is written as AGENTS-SYMKIT.md (last pack wins). A pointer is appended to AGENTS.md; existing AGENTS.md is never replaced. Canonical trees also include .agents/. Vendor adapters (default: grok) are mirrors. Preview always prints. The installer never commits.",
     after_help = help::AFTER_HELP,
     disable_help_subcommand = true
 )]
