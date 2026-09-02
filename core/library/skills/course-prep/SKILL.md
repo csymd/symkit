@@ -41,7 +41,7 @@ private prep or answer keys to student-facing trees.
 
 - Course id and session/module
 - Time box
-- Learning objectives
+- Learning objectives (`docs/slos.md` or `documents/slos.md` when present; do not invent SLOs)
 - What already exists in the repo (`docs/modules/`, `lectures/`, `assignments/`)
 - Constraints (no new tools, public data only, LMS deliverable, etc.)
 

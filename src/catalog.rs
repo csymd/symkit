@@ -51,14 +51,54 @@ pub struct AdaptersConfig {
     pub all: Vec<String>,
 }
 
-#[derive(Debug, Clone, Default, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct Canonical {
+    #[serde(default = "default_agents_md")]
+    pub agents_md: String,
+    #[serde(default = "default_agents_overlay")]
+    pub agents_overlay: String,
     #[serde(default = "default_state")]
     pub state: String,
 }
 
+impl Default for Canonical {
+    fn default() -> Self {
+        Self {
+            agents_md: default_agents_md(),
+            agents_overlay: default_agents_overlay(),
+            state: default_state(),
+        }
+    }
+}
+
+fn default_agents_md() -> String {
+    "AGENTS.md".into()
+}
+
+fn default_agents_overlay() -> String {
+    "AGENTS-SYMKIT.md".into()
+}
+
 fn default_state() -> String {
     ".symkit/state.yaml".into()
+}
+
+impl Canonical {
+    pub fn agents_md(&self) -> &str {
+        if self.agents_md.is_empty() {
+            "AGENTS.md"
+        } else {
+            &self.agents_md
+        }
+    }
+
+    pub fn agents_overlay(&self) -> &str {
+        if self.agents_overlay.is_empty() {
+            "AGENTS-SYMKIT.md"
+        } else {
+            &self.agents_overlay
+        }
+    }
 }
 
 #[derive(Debug, Clone, Default, Deserialize)]
@@ -117,6 +157,8 @@ pub struct Harness {
     #[serde(default)]
     pub workspace: String,
     #[serde(default)]
+    pub templates: BTreeMap<String, DocTemplate>,
+    #[serde(default)]
     pub packages: BTreeMap<String, PackageMeta>,
     #[serde(default)]
     pub roles: BTreeMap<String, RoleSpec>,
@@ -126,6 +168,26 @@ pub struct Harness {
 
 fn default_status() -> String {
     "active".into()
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct DocTemplate {
+    pub path: String,
+    #[serde(default)]
+    pub dest: String,
+}
+
+impl DocTemplate {
+    pub fn dest_name(&self) -> &str {
+        if self.dest.is_empty() {
+            Path::new(&self.path)
+                .file_name()
+                .and_then(|s| s.to_str())
+                .unwrap_or("doc.md")
+        } else {
+            &self.dest
+        }
+    }
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -310,6 +372,12 @@ impl Catalog {
         out.push_str(&format!("DESCRIPTION={}\n", h.description));
         out.push_str(&format!("DEFAULT_ROLE={}\n", h.default_role));
         out.push_str(&format!("WORKSPACE={}\n", h.workspace));
+        if !h.templates.is_empty() {
+            out.push_str("TEMPLATE\tDEST\tPATH\n");
+            for (id, tmpl) in &h.templates {
+                out.push_str(&format!("{id}\t{}\t{}\n", tmpl.dest_name(), tmpl.path));
+            }
+        }
         out.push_str("PACKAGE\tSAFE\tPATH\tDESCRIPTION\n");
         for (pkg, meta) in &h.packages {
             let safe = if meta.student_safe { "yes" } else { "no" };
@@ -328,6 +396,15 @@ impl Catalog {
 
     pub fn skill_path(&self, name: &str) -> PathBuf {
         PathBuf::from(&self.library.skills).join(name)
+    }
+
+    pub fn doc_template(&self, harness: &str, id: &str) -> Result<&DocTemplate> {
+        let h = self.harness(harness)?;
+        h.templates.get(id).ok_or_else(|| Error::UnknownDocTemplate {
+            name: id.to_string(),
+            harness: harness.to_string(),
+            known: join_keys(&h.templates),
+        })
     }
 }
 
@@ -434,6 +511,13 @@ mod tests {
     }
 
     #[test]
+    fn canonical_agents_overlay() {
+        let cat = load_repo();
+        assert_eq!(cat.canonical.agents_md(), "AGENTS.md");
+        assert_eq!(cat.canonical.agents_overlay(), "AGENTS-SYMKIT.md");
+    }
+
+    #[test]
     fn resolve_default_role() {
         let cat = load_repo();
         let r = cat.resolve("teaching", None, &[]).unwrap();
@@ -528,5 +612,27 @@ mod tests {
         let cat = load_repo();
         let s = cat.format_show("teaching").unwrap();
         assert!(s.lines().any(|l| l.starts_with("instructor\t")));
+    }
+
+    #[test]
+    fn show_lists_doc_templates() {
+        let cat = load_repo();
+        let teaching = cat.format_show("teaching").unwrap();
+        assert!(teaching.contains("TEMPLATE\tDEST\tPATH"));
+        assert!(teaching.lines().any(|l| l.starts_with("slos\t")));
+        let research = cat.format_show("research").unwrap();
+        assert!(research.lines().any(|l| l.starts_with("aims\t")));
+        assert!(research.lines().any(|l| l.starts_with("protocol\t")));
+        let product = cat.format_show("product").unwrap();
+        assert!(!product.contains("TEMPLATE\t"));
+    }
+
+    #[test]
+    fn doc_template_lookup() {
+        let cat = load_repo();
+        let slos = cat.doc_template("teaching", "slos").unwrap();
+        assert_eq!(slos.dest_name(), "slos.md");
+        let err = cat.doc_template("teaching", "aims").unwrap_err();
+        assert!(err.to_string().contains("unknown doc template"));
     }
 }

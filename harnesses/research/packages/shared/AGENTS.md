@@ -15,7 +15,8 @@ improvised science.
 
 ## Source of scientific truth
 
-1. Documents in `docs/` (aims, protocol, SAP) when present
+1. Documents in `docs/` or `documents/` — prefer `aims.md` and
+   `protocol.md` when present, then any SAP
 2. Explicit assumption blocks next to analysis code when the aims leave
    parameters open
 3. The human running the study
@@ -34,7 +35,7 @@ Typical names when you are starting empty:
 | Path | Role |
 |:-----|:-----|
 | `analysis/` | Code, workstream READMEs |
-| `docs/` | Narrative science (aims, protocol, SAP) |
+| `docs/` or `documents/` | Narrative science (`aims.md`, `protocol.md`, SAP) |
 | `results/` | Generated artifacts (no huge binaries without asking) |
 | `data/` | Pointers and tiny public samples — not restricted extracts |
 

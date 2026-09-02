@@ -9,6 +9,10 @@ repositories (grants, analyses, methods papers).
 
 # Existing lab repo — packs only; do not pass --scaffold unless you want stubs
 ./cli/symkit install /path/to/existing-study --harness research --role researcher
+
+# Faculty-owned blanks (copy-if-missing into docs/ or documents/)
+./cli/symkit install /path/to/study --harness research --role researcher \
+  --docs aims --docs protocol
 ```
 
 `study-layout` maps the tree that is already here. It does not invent a
