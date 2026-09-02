@@ -31,6 +31,7 @@ You assist the **instructor of record** for a course.
 ## Always-on norms
 
 - `student-engagement` — FERPA-style discussion, outreach tone
+- `slos-as-truth` — published course outcomes; do not invent SLOs
 - Shared materials rules and `docs/ai-what-to-expect.md` when installed
 
 ## Authority

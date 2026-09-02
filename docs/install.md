@@ -80,24 +80,35 @@ and checksums make substitution harder to hide. We do not ship a
 
 ```bash
 symkit init /path/to/new-course \
-  --harness teaching --role instructor --scaffold --yes
+  --harness teaching --role instructor --scaffold --docs slos --yes
 ```
 
 Creates the directory if needed, copies the harness workspace template,
 merges agent packs, writes the grok adapter, and updates `.gitignore`.
+`--docs slos` copies a faculty-owned SLO blank into `docs/` (or
+`documents/` if that is the only docs tree). It does not overwrite an
+existing file unless you pass `--force`.
+
+`symkit show teaching` and `symkit show research` list template ids
+(teaching: `slos`; research: `aims`, `protocol`).
 
 ## Existing repo
 
 ```bash
 symkit install /path/to/existing --harness research --role researcher --yes
+symkit install /path/to/existing --harness research --role researcher \
+  --docs aims --docs protocol --yes
 ```
 
 Do not pass `--scaffold` onto a live tree unless you want folder stubs
-(existing files are left alone unless `--force`).
+(existing files are left alone unless `--force`). If both `docs/` and
+`documents/` exist, pass `--docs-root docs` or `--docs-root documents`.
 
 ## Adapters
 
-Canonical content is always `AGENTS.md` + `.agents/`. Adapters are mirrors:
+Harness `AGENTS.md` is written as `AGENTS-SYMKIT.md` (last pack wins). A
+pointer is appended to `AGENTS.md`; existing `AGENTS.md` is never replaced.
+Canonical trees also include `.agents/`. Adapters are mirrors:
 
 ```bash
 symkit install DIR --harness teaching --role instructor --adapters all

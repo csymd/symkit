@@ -71,7 +71,7 @@ Before writing scores or `FEEDBACK.md`:
 
 ## Content / understanding
 
-- Method fit for the **stated** learning objective
+- Method fit for the **stated** learning objective (course SLOs in `docs/slos.md` or `documents/slos.md` when present)
 - Interpretation aligned with evidence
 - Limitations, validation story, or data-ethics notes when the assignment warrants them
 

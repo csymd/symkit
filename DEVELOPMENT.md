@@ -76,6 +76,7 @@ core/library/skills/  skill bodies; catalog assigns which roles get them
 core/templates/       new-agent / new-rule / new-skill / new-harness
 harnesses/<name>/
   packages/<pkg>/     AGENTS.md, .agents/{rules,skills,agents}, docs/
+  templates/          faculty-owned blanks copied by `--docs <id>`
   workspace/          copied only by `symkit init --scaffold`
 examples/             overlay pattern (not registered by default)
 docs/                 install, UX, authoring
@@ -96,8 +97,12 @@ tests/smoke.sh        installer behavior
 4. `core/rules/` merges into the target `.agents/rules/`.
 5. Library skills listed on the role (plus `core.always_skills`) copy into
    `.agents/skills/<name>/`. Other library skills are pruned.
-6. Each resolved package merges `AGENTS.md` (last pack wins), `.agents/`
-   (rules/agents; leftover package skills if any), and `docs/`.
+6. Each resolved package copies pack `AGENTS.md` to `AGENTS-SYMKIT.md`
+   (last pack wins) and merges `.agents/` (rules/agents; leftover package
+   skills if any) and `docs/`. After packs, a pointer block is appended to
+   `AGENTS.md` (created if missing; never replaced). Optional `--docs <id>`
+   copies catalogued templates into `docs/` or `documents/` (detected;
+   `--docs-root` if both exist) without overwrite unless `--force`.
 7. Selected adapters mirror `.agents/` into `.grok/`, `.claude/`, and/or
    `.codex/` (default: grok).
 8. Target `.gitignore` is updated additively (`.agents/`, vendor trees,
@@ -114,7 +119,7 @@ enforced access control.
 2. Add or reuse skill bodies under `core/library/skills/`.
 3. Optional workspace under `harnesses/<name>/workspace/`.
 4. Register `status`, `packages`, role `packages:` / `skills:`, `prune`,
-   and `workspace` in `catalog.yaml`.
+   `workspace`, and optional `templates:` in `catalog.yaml`.
 5. Check:
 
 ```bash
@@ -155,9 +160,9 @@ Rust / C-style: `//`. Python, shell, YAML, TOML: `#`. Markdown: an HTML comment.
 **Keep** the short header on:
 
 - Engine: `src/`, `cli/symkit`, `tests/smoke.sh`, `Cargo.toml`, `catalog.yaml`
-- Pack-owned content the installer copies: package `AGENTS.md`,
-  `.agents/{rules,skills,agents}`, package `docs/`, `core/rules/`,
-  `core/library/skills/`
+- Pack-owned content the installer copies: package `AGENTS.md` (as
+  `AGENTS-SYMKIT.md` in the target), `.agents/{rules,skills,agents}`,
+  package `docs/`, `core/rules/`, `core/library/skills/`
 - Authoring templates in `core/templates/` (they seed installed content)
 
 **Do not** put headers on:
@@ -170,7 +175,8 @@ Rust / C-style: `//`. Python, shell, YAML, TOML: `#`. Markdown: an HTML comment.
 
 ## Tests
 
-`cargo test` covers catalog resolve, adapter parsing, and gitignore.
+`cargo test` covers catalog resolve, adapter parsing, gitignore, and the
+`AGENTS.md` harness pointer.
 
 [`tests/smoke.sh`](tests/smoke.sh) is the integration gate. It checks:
 
@@ -179,6 +185,7 @@ Rust / C-style: `//`. Python, shell, YAML, TOML: `#`. Markdown: an HTML comment.
 - learner isolation (no staff skills)
 - `--adapters none` and `--adapters all`
 - `init --scaffold` and no-clobber without `--force`
+- `--docs` copy-if-missing, `documents/` dest, ambiguous docs-root
 - research, ai, product, creative, performance, and engineering scaffolds
 - install into this repo refused
 - gitignore is additive

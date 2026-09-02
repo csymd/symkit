@@ -29,6 +29,18 @@ pub enum Error {
     UnknownPackages { harness: String, names: String },
     #[error("unknown package '{package}' in harness '{harness}'")]
     UnknownPackage { harness: String, package: String },
+    #[error("unknown doc template '{name}' for {harness} (have: {known})")]
+    UnknownDocTemplate {
+        name: String,
+        harness: String,
+        known: String,
+    },
+    #[error("doc template file missing: {0}")]
+    DocTemplateMissing(PathBuf),
+    #[error("both docs/ and documents/ exist; pass --docs-root docs or --docs-root documents")]
+    AmbiguousDocsRoot,
+    #[error("invalid --docs-root '{0}' (relative path only; not .symkit/.agents/vendor trees)")]
+    InvalidDocsRoot(String),
     #[error("package path missing: {0}")]
     PackagePathMissing(PathBuf),
     #[error("unknown library skill '{name}' (looked in {path})")]

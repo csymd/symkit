@@ -41,7 +41,7 @@ use symkit::{
 #[command(
     name = "symkit",
     about = "Install agent instructions, skills, and optional workspace files into another repo. Does not commit.",
-    long_about = "Install a named harness (teaching, research, engineering, …) and role into a target directory.\n\nCanonical content lands in AGENTS.md + .agents/. Vendor adapters (default: grok) are mirrors. Preview always prints. The installer never commits.",
+    long_about = "Install a named harness (teaching, research, engineering, …) and role into a target directory.\n\nHarness AGENTS.md is written as AGENTS-SYMKIT.md (last pack wins). A pointer is appended to AGENTS.md; existing AGENTS.md is never replaced. Canonical trees also include .agents/. Vendor adapters (default: grok) are mirrors. Preview always prints. The installer never commits.",
     after_help = help::AFTER_HELP,
     disable_help_subcommand = true
 )]
@@ -61,12 +61,12 @@ enum Command {
     },
     /// Create or activate a workspace
     #[command(
-        long_about = "Create the target directory if needed, then install the harness.\nOn a TTY, missing target / harness / role / scaffold are prompted.\nAdd --scaffold to copy workspace folder stubs (skipped if they already exist)."
+        long_about = "Create the target directory if needed, then install the harness.\nOn a TTY, missing target / harness / role / scaffold are prompted.\nAdd --scaffold to copy workspace folder stubs (skipped if they already exist).\nAdd --docs <id> to copy a catalogued faculty-owned blank (slos, aims, …) into docs/ or documents/."
     )]
     Init(WorkArgs),
     /// Install packs into an existing repo
     #[command(
-        long_about = "Install a harness into an existing directory. The target must already exist.\nPass --scaffold only if you also want workspace stubs."
+        long_about = "Install a harness into an existing directory. The target must already exist.\nPass --scaffold only if you also want workspace stubs.\nPass --docs <id> to copy a catalogued blank into docs/ or documents/ (no overwrite unless --force)."
     )]
     Install(WorkArgs),
     /// Rewrite vendor adapters only
@@ -115,6 +115,12 @@ struct WorkArgs {
     /// Copy harness workspace stubs (no overwrite unless --force)
     #[arg(long)]
     scaffold: bool,
+    /// Copy a catalogued doc template (repeatable). `symkit show <harness>` lists ids
+    #[arg(long = "docs", action = clap::ArgAction::Append, value_name = "ID")]
+    docs: Vec<String>,
+    /// Directory for --docs files (`docs` or `documents`). Required if both exist with --yes
+    #[arg(long = "docs-root", value_name = "DIR")]
+    docs_root: Option<String>,
     /// Keep leftover role skills / agents / rules
     #[arg(long = "no-prune")]
     no_prune: bool,
@@ -306,6 +312,8 @@ fn run_work(
         prune: !args.no_prune,
         yes: args.yes,
         dry_run: args.dry_run,
+        docs: args.docs,
+        docs_root: args.docs_root,
     };
     install::run(&req)
 }

@@ -9,6 +9,7 @@ use std::{
         Write,
     },
     path::{
+        Component,
         Path,
         PathBuf,
     },
@@ -44,9 +45,11 @@ pub struct InstallRequest {
     pub prune: bool,
     pub yes: bool,
     pub dry_run: bool,
+    pub docs: Vec<String>,
+    pub docs_root: Option<String>,
 }
 
-pub fn preview(req: &InstallRequest) {
+pub fn preview(req: &InstallRequest, docs_root: &str) {
     println!("Kit:      {}", req.kit_root.display());
     println!("Target:   {}", req.target.display());
     println!("Harness:  {}", req.resolved.harness);
@@ -80,7 +83,10 @@ pub fn preview(req: &InstallRequest) {
     } else {
         println!("Scaffold: {scaf} ({})", req.resolved.workspace);
     }
-    println!("AGENTS.md: last pack that ships one wins");
+    println!(
+        "AGENTS.md: append pointer (never replace); {} last pack that ships one wins",
+        req.catalog.canonical.agents_overlay()
+    );
     if !req.resolved.private.is_empty() {
         println!(
             "Private:  {}  (do not commit to student-facing trees)",
@@ -89,6 +95,14 @@ pub fn preview(req: &InstallRequest) {
     }
     if !req.resolved.student_safe.is_empty() {
         println!("Safe:     {}", req.resolved.student_safe.join(" "));
+    }
+    if !req.docs.is_empty() {
+        println!("Docs:     {} → {docs_root}/", req.docs.join(" "));
+        for id in unique_ids(&req.docs) {
+            if let Ok(tmpl) = req.catalog.doc_template(&req.resolved.harness, id) {
+                println!("          {id} → {docs_root}/{}", tmpl.dest_name());
+            }
+        }
     }
 }
 
@@ -132,7 +146,20 @@ pub fn run(req: &InstallRequest) -> Result<()> {
         }
     }
 
-    preview(req);
+    let docs_root = if req.docs.is_empty() {
+        String::new()
+    } else {
+        for id in unique_ids(&req.docs) {
+            let tmpl = req.catalog.doc_template(&req.resolved.harness, id)?;
+            let src = req.kit_root.join(&tmpl.path);
+            if !src.is_file() {
+                return Err(Error::DocTemplateMissing(src));
+            }
+            validate_rel_path(tmpl.dest_name())?;
+        }
+        resolve_docs_root(&req.target, req.docs_root.as_deref(), req.yes)?
+    };
+    preview(req, &docs_root);
     confirm(req)?;
 
     println!();
@@ -163,8 +190,21 @@ pub fn run(req: &InstallRequest) -> Result<()> {
 
     install_library_skills(req)?;
 
+    let mut wrote_overlay = false;
     for pkg in &req.resolved.packages {
-        install_package(&req.kit_root, &req.target, &req.catalog, &req.resolved.harness, pkg)?;
+        wrote_overlay |= install_package(&req.kit_root, &req.target, &req.catalog, &req.resolved.harness, pkg)?;
+    }
+    if wrote_overlay {
+        ensure_agents_md_pointer(
+            &req.target,
+            req.catalog.canonical.agents_md(),
+            req.catalog.canonical.agents_overlay(),
+        )?;
+    }
+
+    if !req.docs.is_empty() {
+        println!();
+        install_doc_templates(req, &docs_root)?;
     }
 
     println!();
@@ -209,7 +249,7 @@ fn scaffold_workspace(kit: &Path, target: &Path, rel: &str, force: bool) -> Resu
     Ok(())
 }
 
-fn install_package(kit: &Path, target: &Path, catalog: &Catalog, harness: &str, name: &str) -> Result<()> {
+fn install_package(kit: &Path, target: &Path, catalog: &Catalog, harness: &str, name: &str) -> Result<bool> {
     let rel = catalog.package_path(harness, name)?;
     let src = kit.join(&rel);
     if !src.is_dir() {
@@ -220,10 +260,13 @@ fn install_package(kit: &Path, target: &Path, catalog: &Catalog, harness: &str, 
     if !safe {
         println!("  note: '{name}' is staff-local — do not commit to student-facing trees");
     }
+    let mut wrote_overlay = false;
     let agents_md = src.join("AGENTS.md");
     if agents_md.is_file() {
-        fs::copy(&agents_md, target.join("AGENTS.md"))?;
-        println!("  AGENTS.md ← {}", agents_md.display());
+        let overlay = catalog.canonical.agents_overlay();
+        fs::copy(&agents_md, target.join(overlay))?;
+        println!("  {overlay} ← {}", agents_md.display());
+        wrote_overlay = true;
     }
     merge_tree(
         &src.join(".agents").join("rules"),
@@ -241,6 +284,41 @@ fn install_package(kit: &Path, target: &Path, catalog: &Catalog, harness: &str, 
     if docs.is_dir() {
         merge_tree(&docs, &target.join("docs"))?;
         println!("  docs/ ← {}/docs/", rel.display());
+    }
+    Ok(wrote_overlay)
+}
+
+const AGENTS_POINTER_BEGIN: &str = "<!-- BEGIN symkit harness (do not edit this block) -->";
+const AGENTS_POINTER_END: &str = "<!-- END symkit harness -->";
+
+fn agents_pointer_block(agents_md: &str, overlay: &str) -> String {
+    format!(
+        "{AGENTS_POINTER_BEGIN}\nRead [`{overlay}`]({overlay}) and follow it as additional always-on project rules from the installed symkit harness. Instructions in this `{agents_md}` take precedence when they conflict.\n{AGENTS_POINTER_END}\n"
+    )
+}
+
+fn ensure_agents_md_pointer(target: &Path, agents_md: &str, overlay: &str) -> Result<()> {
+    let path = target.join(agents_md);
+    let block = agents_pointer_block(agents_md, overlay);
+    if path.is_file() {
+        let existing = fs::read_to_string(&path)?;
+        if existing.contains(AGENTS_POINTER_BEGIN) {
+            println!("  {agents_md}: harness pointer already present");
+            return Ok(());
+        }
+        let mut out = existing;
+        if !out.is_empty() && !out.ends_with('\n') {
+            out.push('\n');
+        }
+        if !out.is_empty() {
+            out.push('\n');
+        }
+        out.push_str(&block);
+        fs::write(&path, out)?;
+        println!("  {agents_md}: appended harness pointer → {overlay}");
+    } else {
+        fs::write(&path, format!("# {agents_md}\n\n{block}"))?;
+        println!("  {agents_md}: wrote harness pointer → {overlay}");
     }
     Ok(())
 }
@@ -387,9 +465,190 @@ fn read_existing_harness(target: &Path, catalog: &Catalog) -> Option<String> {
     None
 }
 
+const RESERVED_DOCS_ROOT: &[&str] = &[".symkit", ".agents", ".grok", ".claude", ".codex"];
+
+fn unique_ids(ids: &[String]) -> Vec<&str> {
+    let mut out = Vec::new();
+    for id in ids {
+        if !id.is_empty() && !out.contains(&id.as_str()) {
+            out.push(id.as_str());
+        }
+    }
+    out
+}
+
+fn validate_rel_path(raw: &str) -> Result<String> {
+    let trimmed = raw.trim().trim_end_matches('/');
+    if trimmed.is_empty() {
+        return Err(Error::InvalidDocsRoot(raw.to_string()));
+    }
+    let path = Path::new(trimmed);
+    if path.is_absolute() {
+        return Err(Error::InvalidDocsRoot(raw.to_string()));
+    }
+    for comp in path.components() {
+        match comp {
+            Component::Normal(name) => {
+                let name = name.to_string_lossy();
+                if RESERVED_DOCS_ROOT.contains(&name.as_ref()) {
+                    return Err(Error::InvalidDocsRoot(raw.to_string()));
+                }
+            }
+            _ => return Err(Error::InvalidDocsRoot(raw.to_string())),
+        }
+    }
+    Ok(trimmed.to_string())
+}
+
+#[derive(Debug, PartialEq, Eq)]
+enum DocsRootGuess {
+    Docs,
+    Documents,
+    Both,
+    Neither,
+}
+
+fn detect_docs_root(target: &Path) -> DocsRootGuess {
+    let docs = target.join("docs").is_dir();
+    let documents = target.join("documents").is_dir();
+    match (docs, documents) {
+        (true, false) => DocsRootGuess::Docs,
+        (false, true) => DocsRootGuess::Documents,
+        (true, true) => DocsRootGuess::Both,
+        (false, false) => DocsRootGuess::Neither,
+    }
+}
+
+pub fn resolve_docs_root(target: &Path, explicit: Option<&str>, yes: bool) -> Result<String> {
+    if let Some(raw) = explicit {
+        return validate_rel_path(raw);
+    }
+    match detect_docs_root(target) {
+        DocsRootGuess::Docs | DocsRootGuess::Neither => Ok("docs".into()),
+        DocsRootGuess::Documents => Ok("documents".into()),
+        DocsRootGuess::Both => {
+            if yes || !io::stdin().is_terminal() {
+                return Err(Error::AmbiguousDocsRoot);
+            }
+            print!("Both docs/ and documents/ exist. Docs root [docs]: ");
+            io::stdout().flush()?;
+            let mut line = String::new();
+            io::stdin().read_line(&mut line)?;
+            let t = line.trim();
+            if t.is_empty() {
+                Ok("docs".into())
+            } else {
+                validate_rel_path(t)
+            }
+        }
+    }
+}
+
+fn install_doc_templates(req: &InstallRequest, docs_root: &str) -> Result<()> {
+    println!("Copying doc templates into {docs_root}/ ...");
+    for id in unique_ids(&req.docs) {
+        let tmpl = req.catalog.doc_template(&req.resolved.harness, id)?;
+        let src = req.kit_root.join(&tmpl.path);
+        if !src.is_file() {
+            return Err(Error::DocTemplateMissing(src));
+        }
+        let dest_name = tmpl.dest_name();
+        validate_rel_path(dest_name)?;
+        let dest = req.target.join(docs_root).join(dest_name);
+        let rel = format!("{docs_root}/{dest_name}");
+        if dest.exists() && !req.force {
+            println!("  skip existing {rel}");
+            continue;
+        }
+        if let Some(parent) = dest.parent() {
+            fs::create_dir_all(parent)?;
+        }
+        fs::copy(&src, &dest)?;
+        println!("  {id} → {rel}");
+    }
+    Ok(())
+}
+
 pub fn adapt_only(target: &Path, adapters: &[String]) -> Result<()> {
     println!("Target:   {}", target.display());
     write_selected_adapters(target, adapters)?;
     ensure_agent_gitignore(target)?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use tempfile::tempdir;
+
+    use super::*;
+
+    #[test]
+    fn pointer_creates_agents_md() {
+        let dir = tempdir().unwrap();
+        ensure_agents_md_pointer(dir.path(), "AGENTS.md", "AGENTS-SYMKIT.md").unwrap();
+        let text = fs::read_to_string(dir.path().join("AGENTS.md")).unwrap();
+        assert!(text.contains(AGENTS_POINTER_BEGIN));
+        assert!(text.contains("AGENTS-SYMKIT.md"));
+        assert!(text.contains("take precedence"));
+    }
+
+    #[test]
+    fn pointer_appends_without_clobber() {
+        let dir = tempdir().unwrap();
+        let path = dir.path().join("AGENTS.md");
+        fs::write(&path, "repo-specific keep\n").unwrap();
+        ensure_agents_md_pointer(dir.path(), "AGENTS.md", "AGENTS-SYMKIT.md").unwrap();
+        ensure_agents_md_pointer(dir.path(), "AGENTS.md", "AGENTS-SYMKIT.md").unwrap();
+        let text = fs::read_to_string(&path).unwrap();
+        assert!(text.starts_with("repo-specific keep"));
+        assert_eq!(text.matches(AGENTS_POINTER_BEGIN).count(), 1);
+        assert!(text.contains("AGENTS-SYMKIT.md"));
+    }
+
+    #[test]
+    fn detect_docs_vs_documents() {
+        let dir = tempdir().unwrap();
+        assert_eq!(detect_docs_root(dir.path()), DocsRootGuess::Neither);
+        fs::create_dir(dir.path().join("docs")).unwrap();
+        assert_eq!(detect_docs_root(dir.path()), DocsRootGuess::Docs);
+        fs::create_dir(dir.path().join("documents")).unwrap();
+        assert_eq!(detect_docs_root(dir.path()), DocsRootGuess::Both);
+    }
+
+    #[test]
+    fn resolve_prefers_documents_when_only_that_exists() {
+        let dir = tempdir().unwrap();
+        fs::create_dir(dir.path().join("documents")).unwrap();
+        let root = resolve_docs_root(dir.path(), None, true).unwrap();
+        assert_eq!(root, "documents");
+    }
+
+    #[test]
+    fn resolve_defaults_to_docs_when_neither_exists() {
+        let dir = tempdir().unwrap();
+        let root = resolve_docs_root(dir.path(), None, true).unwrap();
+        assert_eq!(root, "docs");
+    }
+
+    #[test]
+    fn resolve_both_errors_without_explicit_root() {
+        let dir = tempdir().unwrap();
+        fs::create_dir(dir.path().join("docs")).unwrap();
+        fs::create_dir(dir.path().join("documents")).unwrap();
+        let err = resolve_docs_root(dir.path(), None, true).unwrap_err();
+        assert!(matches!(err, Error::AmbiguousDocsRoot));
+        let root = resolve_docs_root(dir.path(), Some("documents"), true).unwrap();
+        assert_eq!(root, "documents");
+    }
+
+    #[test]
+    fn validate_docs_root_rejects_reserved_and_parent() {
+        assert!(validate_rel_path("docs").is_ok());
+        assert!(validate_rel_path("documents").is_ok());
+        assert!(validate_rel_path("slos.md").is_ok());
+        assert!(validate_rel_path(".symkit").is_err());
+        assert!(validate_rel_path("../docs").is_err());
+        assert!(validate_rel_path("/tmp/docs").is_err());
+        assert!(validate_rel_path("").is_err());
+    }
 }

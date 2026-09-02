@@ -36,7 +36,9 @@ honest about what they install.
 - Refuse `init` / `install` when the target *is* this repo.
 - Privilege is **pack-based**: TA installs prune instructor-only skills;
   learner installs must not drop staff trees onto disk.
-- `AGENTS.md` in a target is last-pack-wins; `.agents/` and `docs/` merge.
+- Pack `AGENTS.md` in a target is `AGENTS-SYMKIT.md` (last pack wins). A
+  pointer is appended to `AGENTS.md`; existing `AGENTS.md` is never replaced.
+  `.agents/` and `docs/` merge.
 - Default adapters: **grok only**. `--adapters none` writes no vendor trees.
 - Scaffold does not overwrite existing files unless `--force`.
 - Gitignore in the target is **additive** (marker block for `.agents/`,
@@ -51,9 +53,9 @@ honest about what they install.
 - One harness per target (warn if a second is installed). Do not invent
   multi-harness merge semantics.
 - Copyright headers: engine (`src/`, CLI) and pack-owned installed content
-  (`AGENTS.md`, `.agents/`, pack `docs/`, `core/rules/`,
-  `core/library/skills/`). Not on workspace stubs or kit-internal
-  README/docs. See DEVELOPMENT.md.
+  (`AGENTS-SYMKIT.md` from package `AGENTS.md`, `.agents/`, pack `docs/`,
+  `core/rules/`, `core/library/skills/`). Not on workspace stubs, the
+  `AGENTS.md` pointer block, or kit-internal README/docs. See DEVELOPMENT.md.
 
 ## Development commands
 
@@ -90,7 +92,7 @@ Requires rustup with **stable** (build/clippy/test) and **nightly**
 
 | Path | Role |
 |:-----|:-----|
-| [`catalog.yaml`](catalog.yaml) | Harnesses, packs, roles, prune, adapters |
+| [`catalog.yaml`](catalog.yaml) | Harnesses, packs, roles, prune, adapters, `--docs` templates |
 | [`src/catalog.rs`](src/catalog.rs) | Load + resolve |
 | [`src/install.rs`](src/install.rs) | Scaffold, merge, prune, state |
 | [`src/adapters.rs`](src/adapters.rs) | Vendor mirrors |

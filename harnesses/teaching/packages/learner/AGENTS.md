@@ -6,7 +6,7 @@ Licensed under the Apache License, Version 2.0.
 # AGENTS.md — student / learner defaults
 
 Short guidance for coding agents helping a **student** in a course or project.  
-**Syllabus and LMS always win.** Human guides: `docs/ai-what-to-expect.md` and `docs/ai/*` when present.
+**Syllabus and LMS always win.** Course SLOs (`docs/slos.md` or `documents/slos.md`) when present. Human guides: `docs/ai-what-to-expect.md` and `docs/ai/*` when present.
 
 ## Mission
 
@@ -20,7 +20,7 @@ Use the **`learner`** agent when available (study plan, understanding checks, la
 
 - Never use or request **credentialed clinical data** (e.g. MIMIC extracts), PHI, or secrets in chats or commits.  
 - Prefer **public** course samples (`data/public/` or equivalent).  
-- Do not invent citations, results, due dates, or grade weights.  
+- Do not invent citations, results, due dates, grade weights, or course SLOs.  
 - Do not overwrite the student’s reasoning with a full unowned submission.  
 - Graded hand-in is usually the **LMS**, not git push to the course materials repo.
 
@@ -41,6 +41,7 @@ Use the **`learner`** agent when available (study plan, understanding checks, la
 
 ## Related human docs (if present)
 
+- `docs/slos.md` or `documents/slos.md` (course learning outcomes)
 - `docs/ai-what-to-expect.md`  
 - `docs/ai/workflow.md`  
 - Course syllabus / LMS 

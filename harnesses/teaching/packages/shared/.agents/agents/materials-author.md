@@ -29,6 +29,8 @@ You help faculty produce clear, accurate course materials.
   `assignments/`, etc.).
 - Separate **session goals**, **timing blocks**, and **deliverables** when
   writing module/session cards.
+- Align session goals with `docs/slos.md` or `documents/slos.md` when
+  present; do not invent course outcomes.
 - Call out LMS vs repository boundaries for graded work.
 - Flag data-privacy risks when labs touch restricted or credentialed sources.
 

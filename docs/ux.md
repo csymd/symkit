@@ -10,6 +10,8 @@ CLI-first. No web app.
 2. Which harness — `symkit list` (teaching, research, engineering, …)
 3. Which role — `symkit show <harness>`
 4. Scaffold? — workspace files if the tree is new (`init --scaffold`)
+   Optional `--docs <id>` copies a catalogued blank into `docs/` or
+   `documents/` (copy-if-missing unless `--force`)
 5. Adapters — default grok
 6. Preview — always printed
 7. Write — never commit
@@ -24,7 +26,8 @@ unless you want stubs.
 ## Principles
 
 - Preview before write
-- Last pack wins for `AGENTS.md`; trees merge
+- Last pack wins for `AGENTS-SYMKIT.md`; `AGENTS.md` gets a pointer only
+  (never replaced); `.agents/` and `docs/` merge
 - Private packs are loud
 - Target `.gitignore` is updated, not replaced
 - One harness per target (warn if a second is installed)
